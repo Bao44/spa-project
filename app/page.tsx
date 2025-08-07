@@ -1,103 +1,227 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { Calendar, Phone, Star } from 'lucide-react'
+import Image from "next/image"
+import Link from "next/link"
+import { useUser } from "@/components/UserContext"
+
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+
+export default function HomePage() {
+  const { user } = useUser()
+  
+  const featuredServices = [
+    { name: "Nail Art Design", price: "450.000đ", image: "/images/coban.jpeg?height=200&width=300" },
+    { name: "Chăm sóc da mặt", price: "400.000đ", image: "/images/coban.jpeg?height=200&width=300" },
+    { name: "Pedicure Spa", price: "350.000đ", image: "/images/coban.jpeg?height=200&width=300" },
+  ]
+
+  const featuredProducts = [
+    { name: "Serum Vitamin C", price: "850.000đ", image: "/images/coban.jpeg?height=250&width=200" },
+    { name: "Kem dưỡng ẩm", price: "650.000đ", image: "/images/coban.jpeg?height=250&width=200" },
+    { name: "Mặt nạ collagen", price: "450.000đ", image: "/images/coban.jpeg?height=250&width=200" },
+  ]
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative py-16 lg:py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="space-y-8">
+              <Badge className="bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300 px-4 py-2">
+                {user ? `✨ Xin chào ${user.first_name}! Chào mừng trở lại với Bella Spa & Nail` : "✨ Chào mừng đến với Bella Spa & Nail"}
+              </Badge>
+              <div className="space-y-6">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                  {user ? (
+                    <>
+                      Chào {user.first_name}! 
+                      <span className="bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+                        {" "}Hãy tỏa sáng cùng chúng tôi
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Làm đẹp tự nhiên, 
+                      <span className="bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+                        {" "}tỏa sáng rực rỡ
+                      </span>
+                    </>
+                  )}
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
+                  {user ? (
+                    `Cảm ơn bạn đã tin tưởng Bella Spa & Nail! Chúng tôi luôn sẵn sàng mang đến cho bạn những trải nghiệm làm đẹp tuyệt vời nhất.`
+                  ) : (
+                    "Trải nghiệm dịch vụ spa và nail cao cấp với đội ngũ chuyên gia giàu kinh nghiệm. Chúng tôi cam kết mang đến cho bạn vẻ đẹp hoàn hảo nhất."
+                  )}
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/booking">
+                  <Button size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-8 py-3">
+                    <Calendar className="h-5 w-5 mr-2" />
+                    Đặt lịch ngay
+                  </Button>
+                </Link>
+                <Link href="/contact">
+                  <Button size="lg" variant="outline" className="px-8 py-3">
+                    <Phone className="h-5 w-5 mr-2" />
+                    Gọi tư vấn
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="relative">
+                <Image
+                  src="/images/nail-extension.jpeg?height=600&width=500"
+                  alt="Bella Spa & Nail Interior"
+                  width={500}
+                  height={600}
+                  className="rounded-2xl shadow-2xl w-full"
+                />
+                <div className="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                    <span className="font-semibold text-lg">4.9/5</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">1000+ khách hàng hài lòng</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* Featured Services */}
+      <section className="py-16 lg:py-24 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <Badge className="mb-6 px-4 py-2">Dịch vụ nổi bật</Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+              Dịch vụ được yêu thích nhất
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Khám phá những dịch vụ được khách hàng lựa chọn nhiều nhất tại Bella Spa & Nail
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {featuredServices.map((service, index) => (
+              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md">
+                <CardHeader className="p-0">
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <Image
+                      src={service.image || "/placeholder.svg"}
+                      alt={service.name}
+                      width={300}
+                      height={200}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <CardTitle className="text-xl">{service.name}</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-pink-500">{service.price}</span>
+                  </div>
+                  <Link href="/booking">
+                    <Button className="w-full py-2">Đặt lịch ngay</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link href="/services">
+              <Button variant="outline" size="lg" className="px-8 py-3">
+                Xem tất cả dịch vụ
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-16 lg:py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <Badge className="mb-6 px-4 py-2">Sản phẩm nổi bật</Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+              Mỹ phẩm cao cấp chính hãng
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Những sản phẩm mỹ phẩm được tin dùng và yêu thích nhất
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {featuredProducts.map((product, index) => (
+              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md">
+                <CardHeader className="p-0">
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <Image
+                      src={product.image || "/placeholder.svg"}
+                      alt={product.name}
+                      width={200}
+                      height={250}
+                      className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <CardTitle className="text-xl">{product.name}</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-pink-500">{product.price}</span>
+                    <Button size="sm" className="px-4">Mua ngay</Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link href="/products">
+              <Button variant="outline" size="lg" className="px-8 py-3">
+                Xem tất cả sản phẩm
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 lg:py-24 bg-gradient-to-r from-pink-500 to-purple-600">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+              Sẵn sàng trải nghiệm dịch vụ tuyệt vời?
+            </h2>
+            <p className="text-lg text-pink-100 max-w-2xl mx-auto leading-relaxed">
+              Đặt lịch hẹn ngay hôm nay và cảm nhận sự khác biệt tại Bella Spa & Nail
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/booking">
+                <Button size="lg" variant="secondary" className="px-8 py-3">
+                  <Calendar className="h-5 w-5 mr-2" />
+                  Đặt lịch ngay
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-pink-500 px-8 py-3">
+                  <Phone className="h-5 w-5 mr-2" />
+                  Liên hệ tư vấn
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
-  );
+  )
 }
