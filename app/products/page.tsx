@@ -21,7 +21,7 @@ export default function ProductsPage() {
       brand: "SkinCare Pro", 
       price: "850.000đ", 
       originalPrice: "1.200.000đ",
-      image: "/placeholder.svg?height=250&width=200", 
+      image: "/images/nail-art.jpg?height=250&width=200", 
       rating: 4.8,
       reviews: 124,
       category: "Chăm sóc da mặt",
@@ -31,7 +31,7 @@ export default function ProductsPage() {
       name: "Kem dưỡng ẩm", 
       brand: "Hydra Plus", 
       price: "650.000đ", 
-      image: "/placeholder.svg?height=250&width=200", 
+      image: "/images/nail-art.jpg?height=250&width=200", 
       rating: 4.7,
       reviews: 89,
       category: "Chăm sóc da mặt",
@@ -41,7 +41,7 @@ export default function ProductsPage() {
       name: "Sữa rửa mặt", 
       brand: "Clean Beauty", 
       price: "320.000đ", 
-      image: "/placeholder.svg?height=250&width=200", 
+      image: "/images/nail-art.jpg?height=250&width=200", 
       rating: 4.6,
       reviews: 156,
       category: "Chăm sóc da mặt",
@@ -51,7 +51,7 @@ export default function ProductsPage() {
       name: "Mặt nạ collagen", 
       brand: "Youth Glow", 
       price: "450.000đ", 
-      image: "/placeholder.svg?height=250&width=200", 
+      image: "/images/nail-art.jpg?height=250&width=200", 
       rating: 4.9,
       reviews: 203,
       category: "Chăm sóc da mặt",
@@ -61,7 +61,7 @@ export default function ProductsPage() {
       name: "Tinh chất dưỡng da", 
       brand: "Essence Care", 
       price: "720.000đ", 
-      image: "/placeholder.svg?height=250&width=200", 
+      image: "/images/nail-art.jpg?height=250&width=200", 
       rating: 4.8,
       reviews: 67,
       category: "Chăm sóc da mặt",
@@ -71,7 +71,7 @@ export default function ProductsPage() {
       name: "Kem chống nắng", 
       brand: "Sun Shield", 
       price: "380.000đ", 
-      image: "/placeholder.svg?height=250&width=200", 
+      image: "/images/nail-art.jpg?height=250&width=200", 
       rating: 4.5,
       reviews: 98,
       category: "Chăm sóc da mặt",
@@ -81,7 +81,7 @@ export default function ProductsPage() {
       name: "Dầu dưỡng móng", 
       brand: "Nail Care", 
       price: "280.000đ", 
-      image: "/placeholder.svg?height=250&width=200", 
+      image: "/images/nail-art.jpg?height=250&width=200", 
       rating: 4.7,
       reviews: 45,
       category: "Chăm sóc móng",
@@ -91,7 +91,7 @@ export default function ProductsPage() {
       name: "Tẩy trang mắt môi", 
       brand: "Gentle Remove", 
       price: "420.000đ", 
-      image: "/placeholder.svg?height=250&width=200", 
+      image: "/images/nail-art.jpg?height=250&width=200", 
       rating: 4.6,
       reviews: 78,
       category: "Trang điểm",
@@ -101,7 +101,7 @@ export default function ProductsPage() {
       name: "Kem dưỡng thể", 
       brand: "Body Smooth", 
       price: "550.000đ", 
-      image: "/placeholder.svg?height=250&width=200", 
+      image: "/images/nail-art.jpg?height=250&width=200", 
       rating: 4.8,
       reviews: 112,
       category: "Chăm sóc cơ thể",
@@ -114,7 +114,7 @@ export default function ProductsPage() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16 lg:mb-20">
-          <Badge className="mb-6 px-4 py-2">Sản phẩm mỹ phẩm</Badge>
+          <Badge className="mb-6 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">Sản phẩm mỹ phẩm</Badge>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
             Mỹ phẩm cao cấp chính hãng
           </h1>
@@ -127,7 +127,7 @@ export default function ProductsPage() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-12">
           <Select>
-            <SelectTrigger className="w-full sm:w-[220px]">
+            <SelectTrigger className="w-full sm:w-[220px] cursor-pointer">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Danh mục" />
             </SelectTrigger>
@@ -141,7 +141,7 @@ export default function ProductsPage() {
           </Select>
 
           <Select>
-            <SelectTrigger className="w-full sm:w-[220px]">
+            <SelectTrigger className="w-full sm:w-[220px] cursor-pointer">
               <SelectValue placeholder="Sắp xếp theo" />
             </SelectTrigger>
             <SelectContent>
@@ -217,11 +217,11 @@ export default function ProductsPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button className="flex-1">
+                    <Button className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 cursor-pointer">
                       <ShoppingBag className="h-4 w-4 mr-2" />
                       Mua ngay
                     </Button>
-                    <Button variant="outline" size="icon" className="h-10 w-10">
+                    <Button variant="outline" size="icon" className="h-10 w-10 cursor-pointer">
                       <Heart className="h-4 w-4" />
                     </Button>
                   </div>
@@ -233,28 +233,11 @@ export default function ProductsPage() {
 
         {/* Load More */}
         <div className="text-center mb-16">
-          <Button variant="outline" size="lg" className="px-8 py-3">
+          <Button variant="outline" size="lg" className="px-8 py-3 cursor-pointer">
             Xem thêm sản phẩm
           </Button>
         </div>
 
-        {/* Newsletter */}
-        <Card className="bg-gradient-to-r from-pink-500 to-purple-600 border-0 text-white">
-          <CardContent className="text-center p-12 space-y-6">
-            <h3 className="text-2xl sm:text-3xl font-bold">Đăng ký nhận ưu đãi đặc biệt</h3>
-            <p className="opacity-90 max-w-2xl mx-auto">
-              Nhận thông báo về sản phẩm mới và các chương trình khuyến mãi hấp dẫn
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Nhập email của bạn"
-                className="flex-1 px-4 py-3 rounded-lg text-gray-900"
-              />
-              <Button variant="secondary" className="px-6 py-3">Đăng ký</Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )

@@ -44,7 +44,7 @@ export default function BookingPage() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16 lg:mb-20">
-          <Badge className="mb-6 px-4 py-2">Đặt lịch hẹn</Badge>
+          <Badge className="mb-6 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">Đặt lịch hẹn</Badge>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
             Đặt lịch dễ dàng, nhanh chóng
           </h1>
@@ -164,7 +164,7 @@ export default function BookingPage() {
                     />
                   </div>
 
-                  <Button className="w-full h-12 text-lg bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
+                  <Button className="w-full h-12 text-lg bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 cursor-pointer">
                     <Calendar className="h-5 w-5 mr-2" />
                     Xác nhận đặt lịch
                   </Button>
@@ -255,11 +255,11 @@ export default function BookingPage() {
 
             {/* Quick Contact */}
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" size="lg" className="h-16 flex-col space-y-1">
+              <Button variant="outline" size="lg" className="h-16 flex-col space-y-1 cursor-pointer">
                 <Phone className="h-5 w-5" />
                 <span className="text-sm">Gọi ngay</span>
               </Button>
-              <Button variant="outline" size="lg" className="h-16 flex-col space-y-1">
+              <Button variant="outline" size="lg" className="h-16 flex-col space-y-1 cursor-pointer">
                 <Mail className="h-5 w-5" />
                 <span className="text-sm">Chat Zalo</span>
               </Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff, User, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, User, Lock, Mail, Sparkles } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useUser } from "@/components/UserContext";
@@ -39,14 +39,14 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
-      
+
       if (response.ok && data.user) {
         // Login user using context
         login(data.user);
         setMessage("Đăng nhập thành công!");
         setEmail("");
         setPassword("");
-        
+
         // Redirect to home page
         setTimeout(() => {
           router.push("/");
@@ -67,9 +67,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center space-x-2">
-            <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
-              <User className="h-6 w-6 text-white" />
-            </div>
+            <Sparkles className="h-6 w-6 text-pink-500" />
             <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
               Bella Spa & Nail
             </span>
@@ -88,11 +86,13 @@ export default function LoginPage() {
           <CardContent className="space-y-4">
             <form onSubmit={handleLogin} className="space-y-4">
               {message && (
-                <div className={`p-3 rounded-md text-sm ${
-                  message.includes("thành công") 
-                    ? "bg-green-50 text-green-700 border border-green-200"
-                    : "bg-red-50 text-red-700 border border-red-200"
-                }`}>
+                <div
+                  className={`p-3 rounded-md text-sm ${
+                    message.includes("thành công")
+                      ? "bg-green-50 text-green-700 border border-green-200"
+                      : "bg-red-50 text-red-700 border border-red-200"
+                  }`}
+                >
                   {message}
                 </div>
               )}
@@ -130,7 +130,7 @@ export default function LoginPage() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -159,7 +159,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 cursor-pointer"
                 disabled={isLoading}
               >
                 {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}

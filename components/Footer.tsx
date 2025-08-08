@@ -59,7 +59,7 @@ export function Footer() {
             </p>
             <div className="flex space-x-2">
               <Input placeholder="Email của bạn" className="text-sm" />
-              <Button size="sm" className="px-4">Đăng ký</Button>
+              <Button size="sm" className="px-4 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 cursor-pointer">Đăng ký</Button>
             </div>
           </div>
         </div>

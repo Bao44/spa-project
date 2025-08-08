@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff, User, Lock, Mail, Phone, Calendar } from "lucide-react";
+import { Eye, EyeOff, User, Lock, Mail, Phone, Calendar, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -101,9 +101,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center space-x-2">
-            <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
-              <User className="h-6 w-6 text-white" />
-            </div>
+            <Sparkles className="h-6 w-6 text-pink-500" />
             <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
               Bella Spa & Nail
             </span>
@@ -221,7 +219,7 @@ export default function RegisterPage() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -250,7 +248,7 @@ export default function RegisterPage() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -262,38 +260,10 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="notifications" />
-                  <Label htmlFor="notifications" className="text-sm">
-                    Nhận thông báo về ưu đãi và dịch vụ mới qua email/SMS
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" required />
-                  <Label htmlFor="terms" className="text-sm">
-                    Tôi đồng ý với{" "}
-                    <Link
-                      href="/terms"
-                      className="text-pink-500 hover:underline"
-                    >
-                      Điều khoản dịch vụ
-                    </Link>{" "}
-                    và{" "}
-                    <Link
-                      href="/privacy"
-                      className="text-pink-500 hover:underline"
-                    >
-                      Chính sách bảo mật
-                    </Link>
-                  </Label>
-                </div>
-              </div>
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 cursor-pointer"
                 disabled={isLoading}
               >
                 {isLoading ? "Đang tạo tài khoản..." : "Đăng ký"}
@@ -355,13 +325,6 @@ export default function RegisterPage() {
           </CardContent>
         </Card>
 
-        {/* Welcome Offer */}
-        <div className="mt-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg p-6 text-white text-center">
-          <h3 className="font-bold mb-2">🎉 Ưu đãi chào mừng</h3>
-          <p className="text-sm opacity-90">
-            Giảm 20% cho dịch vụ đầu tiên khi đăng ký tài khoản mới!
-          </p>
-        </div>
       </div>
     </div>
   );

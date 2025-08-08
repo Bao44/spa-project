@@ -7,7 +7,7 @@ import { useUser } from "@/components/UserContext"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function HomePage() {
   const { user } = useUser()
@@ -101,7 +101,7 @@ export default function HomePage() {
       <section className="py-16 lg:py-24 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="mb-6 px-4 py-2">Dịch vụ nổi bật</Badge>
+            <Badge className="mb-6 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 border-none">Dịch vụ nổi bật</Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
               Dịch vụ được yêu thích nhất
             </h2>
@@ -130,7 +130,7 @@ export default function HomePage() {
                     <span className="text-2xl font-bold text-pink-500">{service.price}</span>
                   </div>
                   <Link href="/booking">
-                    <Button className="w-full py-2">Đặt lịch ngay</Button>
+                    <Button className="w-full py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 cursor-pointer">Đặt lịch ngay</Button>
                   </Link>
                 </CardContent>
               </Card>
@@ -139,7 +139,7 @@ export default function HomePage() {
 
           <div className="text-center">
             <Link href="/services">
-              <Button variant="outline" size="lg" className="px-8 py-3">
+              <Button variant="outline" size="lg" className="px-8 py-3 cursor-pointer">
                 Xem tất cả dịch vụ
               </Button>
             </Link>
@@ -151,7 +151,7 @@ export default function HomePage() {
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="mb-6 px-4 py-2">Sản phẩm nổi bật</Badge>
+            <Badge className="mb-6 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">Sản phẩm nổi bật</Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
               Mỹ phẩm cao cấp chính hãng
             </h2>
@@ -178,7 +178,7 @@ export default function HomePage() {
                   <CardTitle className="text-xl">{product.name}</CardTitle>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-pink-500">{product.price}</span>
-                    <Button size="sm" className="px-4">Mua ngay</Button>
+                    <Button size="sm" className="px-4 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 cursor-pointer">Mua ngay</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -187,7 +187,7 @@ export default function HomePage() {
 
           <div className="text-center">
             <Link href="/products">
-              <Button variant="outline" size="lg" className="px-8 py-3">
+              <Button variant="outline" size="lg" className="px-8 py-3 cursor-pointer">
                 Xem tất cả sản phẩm
               </Button>
             </Link>
@@ -199,7 +199,7 @@ export default function HomePage() {
       <section className="py-16 lg:py-24 bg-gradient-to-r from-pink-500 to-purple-600">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="max-w-4xl mx-auto space-y-8">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+            <h2 className="text-3xl sm:text-4xl lg:text-4xl font-bold text-white">
               Sẵn sàng trải nghiệm dịch vụ tuyệt vời?
             </h2>
             <p className="text-lg text-pink-100 max-w-2xl mx-auto leading-relaxed">
@@ -207,13 +207,13 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/booking">
-                <Button size="lg" variant="secondary" className="px-8 py-3">
+                <Button size="lg" variant="secondary" className="px-8 py-3 cursor-pointer">
                   <Calendar className="h-5 w-5 mr-2" />
                   Đặt lịch ngay
                 </Button>
               </Link>
               <Link href="/contact">
-                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-pink-500 px-8 py-3">
+                <Button size="lg" variant="secondary" className="border-white cursor-pointer px-8 py-3">
                   <Phone className="h-5 w-5 mr-2" />
                   Liên hệ tư vấn
                 </Button>
