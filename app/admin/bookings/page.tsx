@@ -85,7 +85,7 @@ export default function BookingsPage() {
         </Dialog>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Giả định số liệu từ API sau */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-admin-card border-admin-border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -101,7 +101,6 @@ export default function BookingsPage() {
             </p>
           </CardContent>
         </Card>
-
         <Card className="bg-admin-card border-admin-border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-admin-card-foreground">
@@ -114,7 +113,6 @@ export default function BookingsPage() {
             <p className="text-xs text-admin-muted-foreground">Cần xử lý</p>
           </CardContent>
         </Card>
-
         <Card className="bg-admin-card border-admin-border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-admin-card-foreground">
@@ -129,7 +127,6 @@ export default function BookingsPage() {
             </p>
           </CardContent>
         </Card>
-
         <Card className="bg-admin-card border-admin-border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-admin-card-foreground">

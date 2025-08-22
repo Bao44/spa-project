@@ -1,83 +1,95 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronLeft, ChevronRight, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { bookingsData } from "@/lib/bookings-data"
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "react-toastify";
 
 interface BookingCalendarProps {
-  onEditBooking: (booking: any) => void
+  onEditBooking: (booking: any) => void;
 }
 
 export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date())
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [bookings, setBookings] = useState<any[]>([]);
+
+  const fetchBookings = async () => {
+    try {
+      const response = await fetch("/api/appointments");
+      if (!response.ok) throw new Error("Lỗi khi lấy danh sách");
+      const data = await response.json();
+      setBookings(data);
+    } catch (error) {
+      toast.error("Không thể tải danh sách appointment");
+    }
+  };
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
   const getDaysInMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
-  }
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  };
 
   const getFirstDayOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-  }
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  };
 
   const navigateMonth = (direction: "prev" | "next") => {
     setCurrentDate((prev) => {
-      const newDate = new Date(prev)
+      const newDate = new Date(prev);
       if (direction === "prev") {
-        newDate.setMonth(prev.getMonth() - 1)
+        newDate.setMonth(prev.getMonth() - 1);
       } else {
-        newDate.setMonth(prev.getMonth() + 1)
+        newDate.setMonth(prev.getMonth() + 1);
       }
-      return newDate
-    })
-  }
+      return newDate;
+    });
+  };
 
   const getBookingsForDate = (date: Date) => {
-    const dateString = date.toISOString().split("T")[0]
-    return bookingsData.filter((booking) => booking.date === dateString)
-  }
+    const dateString = date.toISOString().split("T")[0];
+    return bookings.filter((booking) => booking.date === dateString);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "bg-admin-accent"
+        return "bg-admin-accent";
       case "pending":
-        return "bg-admin-secondary"
+        return "bg-admin-secondary";
       case "in-progress":
-        return "bg-admin-primary"
+        return "bg-admin-primary";
       case "completed":
-        return "bg-green-500"
+        return "bg-green-500";
       case "cancelled":
-        return "bg-admin-destructive"
+        return "bg-admin-destructive";
       default:
-        return "bg-gray-500"
+        return "bg-gray-500";
     }
-  }
+  };
 
-  const daysInMonth = getDaysInMonth(currentDate)
-  const firstDayOfMonth = getFirstDayOfMonth(currentDate)
-  const monthName = currentDate.toLocaleDateString("vi-VN", { month: "long", year: "numeric" })
+  const daysInMonth = getDaysInMonth(currentDate);
+  const firstDayOfMonth = getFirstDayOfMonth(currentDate);
+  const monthName = currentDate.toLocaleDateString("vi-VN", { month: "long", year: "numeric" });
 
-  const days = []
+  const days = [];
 
-  // Empty cells for days before the first day of the month
   for (let i = 0; i < firstDayOfMonth; i++) {
-    days.push(<div key={`empty-${i}`} className="h-32 border border-admin-border bg-admin-muted/20"></div>)
+    days.push(<div key={`empty-${i}`} className="h-32 border border-admin-border bg-admin-muted/20"></div>);
   }
 
-  // Days of the month
   for (let day = 1; day <= daysInMonth; day++) {
-    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
-    const bookings = getBookingsForDate(date)
-    const isToday = date.toDateString() === new Date().toDateString()
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const bookings = getBookingsForDate(date);
+    const isToday = date.toDateString() === new Date().toDateString();
 
     days.push(
       <div
         key={day}
-        className={`h-32 border border-admin-border bg-admin-background p-2 ${
-          isToday ? "ring-2 ring-admin-primary" : ""
-        }`}
+        className={`h-32 border border-admin-border bg-admin-background p-2 ${isToday ? "ring-2 ring-admin-primary" : ""}`}
       >
         <div className={`text-sm font-medium mb-2 ${isToday ? "text-admin-primary" : "text-admin-foreground"}`}>
           {day}
@@ -93,15 +105,15 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
                 <Clock className="h-3 w-3" />
                 <span>{booking.time}</span>
               </div>
-              <div className="truncate">{booking.customerName}</div>
+              <div className="truncate">{booking.fullName}</div>
             </div>
           ))}
           {bookings.length > 3 && (
             <div className="text-xs text-admin-muted-foreground">+{bookings.length - 3} khác</div>
           )}
         </div>
-      </div>,
-    )
+      </div>
+    );
   }
 
   return (
@@ -138,7 +150,6 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
         </div>
       </CardHeader>
       <CardContent>
-        {/* Calendar Header */}
         <div className="grid grid-cols-7 gap-0 mb-4">
           {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((day) => (
             <div
@@ -149,11 +160,7 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
             </div>
           ))}
         </div>
-
-        {/* Calendar Grid */}
         <div className="grid grid-cols-7 gap-0">{days}</div>
-
-        {/* Legend */}
         <div className="flex items-center gap-4 mt-4 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-admin-secondary"></div>
@@ -174,5 +181,5 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

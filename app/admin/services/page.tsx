@@ -33,6 +33,7 @@ export default function ServicesPage() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0); // State để trigger refetch
 
   const handleAddService = () => {
     setEditingService(null);
@@ -47,6 +48,10 @@ export default function ServicesPage() {
   const handleFormClose = () => {
     setIsFormOpen(false);
     setEditingService(null);
+  };
+
+  const handleFormSuccess = () => {
+    setRefreshKey((prev) => prev + 1); // Trigger refetch sau create/update
   };
 
   return (
@@ -76,7 +81,11 @@ export default function ServicesPage() {
                 {editingService ? "Chỉnh sửa dịch vụ" : "Thêm dịch vụ mới"}
               </DialogTitle>
             </DialogHeader>
-            <ServiceForm service={editingService} onClose={handleFormClose} />
+            <ServiceForm
+              service={editingService}
+              onClose={handleFormClose}
+              onSuccess={handleFormSuccess} // Pass onSuccess
+            />
           </DialogContent>
         </Dialog>
       </div>
@@ -112,7 +121,7 @@ export default function ServicesPage() {
                 <SelectItem value="body">Chăm sóc cơ thể</SelectItem>
                 <SelectItem value="facial">Chăm sóc mặt</SelectItem>
                 <SelectItem value="package">Gói dịch vụ</SelectItem>
-              </SelectContent>
+              </SelectContent>  
             </Select>
           </div>
         </CardContent>
@@ -123,6 +132,7 @@ export default function ServicesPage() {
         searchTerm={searchTerm}
         categoryFilter={categoryFilter}
         onEditService={handleEditService}
+        refreshKey={refreshKey} // Pass refreshKey
       />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Edit, Trash2, Eye, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,22 +19,70 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { servicesData } from "@/lib/services-data";
+import { toast } from "react-toastify";
 
 interface ServiceTableProps {
   searchTerm: string;
   categoryFilter: string;
   onEditService: (service: any) => void;
+  refreshKey: number; // Thêm prop này để trigger refetch
 }
 
 export function ServiceTable({
   searchTerm,
   categoryFilter,
   onEditService,
+  refreshKey,
 }: ServiceTableProps) {
-  const [services, setServices] = useState(servicesData);
+  const [services, setServices] = useState([]);
 
-  const filteredServices = services.filter((service) => {
+  // Hàm fetchServices độc lập để có thể gọi lại khi cần
+  const fetchServices = async () => {
+    try {
+      const response = await fetch("/api/admin/services", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setServices(data);
+      } else {
+        throw new Error(data.error || "Lỗi khi lấy danh sách dịch vụ");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Lỗi khi lấy danh sách dịch vụ");
+    }
+  };
+
+  // Gọi fetchServices khi component mount hoặc refreshKey thay đổi
+  useEffect(() => {
+    fetchServices();
+  }, [refreshKey]);
+
+  const handleDeleteService = async (id: number) => {
+    try {
+      const response = await fetch(`/api/admin/services/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Lỗi khi xóa dịch vụ");
+      }
+
+      // Refetch full list after successful delete
+      await fetchServices(); // Gọi lại fetchServices để load lại toàn bộ danh sách
+      toast.success("Xóa thành công");
+    } catch (error: any) {
+      toast.error(error.message || "Đã có lỗi xảy ra khi xóa dịch vụ.");
+    }
+  };
+
+  const filteredServices = services.filter((service: any) => {
     const matchesSearch =
       service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -42,10 +90,6 @@ export function ServiceTable({
       categoryFilter === "all" || service.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
-
-  const handleDeleteService = (id: number) => {
-    setServices(services.filter((service) => service.id !== id));
-  };
 
   const getCategoryBadge = (category: string) => {
     const categoryColors = {
@@ -76,21 +120,6 @@ export function ServiceTable({
     );
   };
 
-  const getStatusBadge = (status: string) => {
-    return status === "active" ? (
-      <Badge className="bg-admin-accent text-admin-accent-foreground">
-        Hoạt động
-      </Badge>
-    ) : (
-      <Badge
-        variant="outline"
-        className="border-admin-border text-admin-muted-foreground"
-      >
-        Tạm dừng
-      </Badge>
-    );
-  };
-
   return (
     <Card className="bg-admin-card border-admin-border">
       <CardHeader>
@@ -116,9 +145,6 @@ export function ServiceTable({
                   Thời gian
                 </TableHead>
                 <TableHead className="text-admin-card-foreground">
-                  Trạng thái
-                </TableHead>
-                <TableHead className="text-admin-card-foreground">
                   Đánh giá
                 </TableHead>
                 <TableHead className="text-admin-card-foreground text-right">
@@ -127,7 +153,7 @@ export function ServiceTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredServices.map((service) => (
+              {filteredServices.map((service: any) => (
                 <TableRow key={service.id} className="border-admin-border">
                   <TableCell>
                     <div>
@@ -156,15 +182,14 @@ export function ServiceTable({
                   <TableCell className="text-admin-foreground">
                     {service.duration} phút
                   </TableCell>
-                  <TableCell>{getStatusBadge(service.status)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
                       <span className="text-admin-foreground">
-                        {service.rating}
+                        {service.rating || "N/A"}
                       </span>
                       <span className="text-yellow-500">★</span>
                       <span className="text-sm text-admin-muted-foreground">
-                        ({service.reviewCount})
+                        ({service.reviewCount || 0})
                       </span>
                     </div>
                   </TableCell>

@@ -1,26 +1,25 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "react-toastify";
 
 interface BookingFormProps {
-  booking?: any
-  onClose: () => void
+  booking?: any;
+  onClose: () => void;
 }
 
 export function BookingForm({ booking, onClose }: BookingFormProps) {
   const [formData, setFormData] = useState({
-    customerName: booking?.customerName || "",
+    customerName: booking?.fullName || "",
     email: booking?.email || "",
     phone: booking?.phone || "",
-    service: booking?.service || "",
+    service: booking?.serviceId || "",
     date: booking?.date || "",
     time: booking?.time || "",
     duration: booking?.duration || "",
@@ -28,23 +27,66 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
     status: booking?.status || "pending",
     notes: booking?.notes || "",
     therapist: booking?.therapist || "",
-  })
+  });
+  const [services, setServices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle form submission logic here
-    console.log("Booking data:", formData)
-    onClose()
-  }
+  // Fetch services từ API
+  const fetchServices = async () => {
+    try {
+      const response = await fetch("/api/admin/services");
+      if (!response.ok) throw new Error("Lỗi khi lấy dịch vụ");
+      const data = await response.json();
+      setServices(data);
+    } catch (error) {
+      toast.error("Không thể tải danh sách dịch vụ");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        fullName: formData.customerName,
+        email: formData.email,
+        phone: formData.phone,
+        serviceId: formData.service,
+        date: formData.date,
+        time: formData.time,
+        note: formData.notes,
+        status: formData.status,
+      };
+      const method = booking ? "PUT" : "POST";
+      const url = booking ? `/api/appointments/${booking.id}` : "/api/appointments";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error("Lỗi khi lưu lịch hẹn");
+      toast.success(booking ? "Cập nhật thành công" : "Tạo lịch hẹn thành công");
+      onClose();
+    } catch (error) {
+      toast.error("Lỗi khi lưu lịch hẹn");
+    }
+  };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  if (loading) return <div>Đang tải...</div>;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-        {/* Customer Information */}
         <Card className="bg-admin-background border-admin-border ml-[-8px]">
           <CardHeader className="ml-[-8px]">
             <CardTitle className="text-admin-foreground">Thông tin khách hàng</CardTitle>
@@ -64,7 +106,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                 required
               />
             </div>
-
             <div>
               <Label htmlFor="email" className="text-admin-foreground">
                 Email
@@ -79,7 +120,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                 required
               />
             </div>
-
             <div>
               <Label htmlFor="phone" className="text-admin-foreground">
                 Số điện thoại
@@ -96,7 +136,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
           </CardContent>
         </Card>
 
-        {/* Booking Details */}
         <Card className="bg-admin-background border-admin-border mr-[-8px]">
           <CardHeader className="ml-[-10px]">
             <CardTitle className="text-admin-foreground">Chi tiết lịch hẹn</CardTitle>
@@ -104,23 +143,20 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
           </CardHeader>
           <CardContent className="space-y-4 ml-[-10px]">
             <div>
-              <Label htmlFor="service" >
-                Dịch vụ
-              </Label>
+              <Label htmlFor="service">Dịch vụ</Label>
               <Select value={formData.service} onValueChange={(value) => handleInputChange("service", value)}>
                 <SelectTrigger className="bg-admin-input border-admin-border text-admin-foreground">
                   <SelectValue placeholder="Chọn dịch vụ" />
                 </SelectTrigger>
                 <SelectContent className="bg-black text-white">
-                  <SelectItem value="Massage thư giãn toàn thân">Massage thư giãn toàn thân</SelectItem>
-                  <SelectItem value="Chăm sóc da mặt cao cấp">Chăm sóc da mặt cao cấp</SelectItem>
-                  <SelectItem value="Gói spa toàn thân VIP">Gói spa toàn thân VIP</SelectItem>
-                  <SelectItem value="Massage đá nóng">Massage đá nóng</SelectItem>
-                  <SelectItem value="Tắm trắng toàn thân">Tắm trắng toàn thân</SelectItem>
+                  {services.map((service) => (
+                    <SelectItem key={service.id} value={service.id}>
+                      {service.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <Label htmlFor="date" className="text-admin-foreground">
@@ -135,7 +171,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                   required
                 />
               </div>
-
               <div>
                 <Label htmlFor="time" className="text-admin-foreground">
                   Giờ
@@ -145,54 +180,19 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                     <SelectValue placeholder="Chọn giờ" />
                   </SelectTrigger>
                   <SelectContent className="bg-black text-white">
-                    <SelectItem value="09:00">09:00</SelectItem>
-                    <SelectItem value="10:00">10:00</SelectItem>
-                    <SelectItem value="11:00">11:00</SelectItem>
-                    <SelectItem value="14:00">14:00</SelectItem>
-                    <SelectItem value="15:00">15:00</SelectItem>
-                    <SelectItem value="16:00">16:00</SelectItem>
-                    <SelectItem value="17:00">17:00</SelectItem>
+                    {["09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"].map((time) => (
+                      <SelectItem key={time} value={time}>
+                        {time}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="duration" className="text-admin-foreground">
-                  Thời gian (phút)
-                </Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  value={formData.duration}
-                  onChange={(e) => handleInputChange("duration", e.target.value)}
-                  placeholder="90"
-                  className="bg-admin-input border-admin-border text-admin-foreground"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="price" className="text-admin-foreground">
-                  Giá (VNĐ)
-                </Label>
-                <Input
-                  id="price"
-                  type="number"
-                  value={formData.price}
-                  onChange={(e) => handleInputChange("price", e.target.value)}
-                  placeholder="800000"
-                  className="bg-admin-input border-admin-border text-admin-foreground"
-                  required
-                />
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Additional Information */}
       <Card className="bg-admin-background border-admin-border">
         <CardHeader>
           <CardTitle className="text-admin-foreground">Thông tin bổ sung</CardTitle>
@@ -217,7 +217,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                 </SelectContent>
               </Select>
             </div>
-
             <div>
               <Label htmlFor="therapist" className="text-admin-foreground">
                 Nhân viên phụ trách
@@ -235,7 +234,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
               </Select>
             </div>
           </div>
-
           <div>
             <Label htmlFor="notes" className="text-admin-foreground">
               Ghi chú
@@ -252,13 +250,12 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
         </CardContent>
       </Card>
 
-      {/* Form Actions */}
       <div className="flex justify-end space-x-4">
         <Button
           type="button"
           variant="outline"
           onClick={onClose}
-          className=" hover:bg-gray-200 cursor-pointer"
+          className="hover:bg-gray-200 cursor-pointer"
         >
           Hủy
         </Button>
@@ -267,5 +264,5 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
         </Button>
       </div>
     </form>
-  )
+  );
 }

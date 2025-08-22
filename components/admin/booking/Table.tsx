@@ -1,216 +1,316 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Edit, Trash2, Eye, MoreHorizontal, Phone, Mail, CheckCircle, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { getAllBookings, updateBookingStatus } from "@/lib/booking-service"
-import { useNotifications } from "@/components/contexts/NotificationContext"
-import { BookingConfirmationDialog } from "./Confirmation"
+import { useState, useEffect } from "react";
+import {
+  Edit,
+  Trash2,
+  Eye,
+  MoreHorizontal,
+  Phone,
+  Mail,
+  CheckCircle,
+  Clock,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "react-toastify";
+import { BookingConfirmationDialog } from "./Confirmation";
 
 interface BookingTableProps {
-  searchTerm: string
-  statusFilter: string
-  dateFilter: string
-  onEditBooking: (booking: any) => void
+  searchTerm: string;
+  statusFilter: string;
+  dateFilter: string;
+  onEditBooking: (booking: any) => void;
 }
 
-export function BookingTable({ searchTerm, statusFilter, dateFilter, onEditBooking }: BookingTableProps) {
-  const [bookings, setBookings] = useState<any[]>([])
-  const [selectedBooking, setSelectedBooking] = useState<any>(null)
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
-  const { addNotification } = useNotifications()
+export function BookingTable({
+  searchTerm,
+  statusFilter,
+  dateFilter,
+  onEditBooking,
+}: BookingTableProps) {
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
+  // Định nghĩa fetchBookings trong scope của component
+  const fetchBookings = async () => {
+    try {
+      const response = await fetch("/api/appointments");
+      if (!response.ok) throw new Error("Lỗi khi lấy danh sách");
+      const data = await response.json();
+      console.log("Dữ liệu từ API:", data);
+      setBookings(data);
+    } catch (error) {
+      toast.error("Không thể tải danh sách appointment");
+    }
+  };
+
+  // Gọi fetchBookings khi component mount
   useEffect(() => {
-    const loadBookings = () => {
-      const storedBookings = getAllBookings()
-      const formattedStoredBookings = storedBookings.map((booking) => ({
-        id: booking.id,
-        customerName: booking.customer.name,
-        email: booking.customer.email,
-        phone: booking.customer.phone,
-        service: booking.serviceName,
-        date: booking.date,
-        time: booking.time,
-        status: booking.status,
-        duration: 60,
-        price: 800000,
-        notes: booking.customer.notes,
-      }))
-
-      const mockBookings = [
-        {
-          id: "mock-1",
-          customerName: "Nguyễn Thị Mai",
-          email: "mai.nguyen@email.com",
-          phone: "0901234567",
-          service: "Swedish Relaxation Massage",
-          date: "2024-12-20",
-          time: "14:00",
-          status: "confirmed",
-          duration: 60,
-          price: 800000,
-          notes: "Muốn massage nhẹ nhàng",
-        },
-        {
-          id: "mock-2",
-          customerName: "Trần Văn Nam",
-          email: "nam.tran@email.com",
-          phone: "0912345678",
-          service: "Deep Tissue Massage",
-          date: "2024-12-21",
-          time: "10:00",
-          status: "pending",
-          duration: 75,
-          price: 1200000,
-          notes: "",
-        },
-      ]
-
-      setBookings([...formattedStoredBookings, ...mockBookings])
-    }
-
-    loadBookings()
-
-    const handleNewBooking = () => {
-      loadBookings()
-    }
-
-    window.addEventListener("newBooking", handleNewBooking)
-    return () => window.removeEventListener("newBooking", handleNewBooking)
-  }, [])
+    fetchBookings();
+  }, []);
 
   const filteredBookings = bookings.filter((booking) => {
     const matchesSearch =
-      booking.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.phone.includes(searchTerm)
+      (booking.fullName?.toLowerCase() || "").includes(
+        searchTerm.toLowerCase()
+      ) ||
+      (booking.serviceName?.toLowerCase() || "").includes(
+        searchTerm.toLowerCase()
+      ) ||
+      (booking.phone || "").includes(searchTerm);
 
-    const matchesStatus = statusFilter === "all" || booking.status === statusFilter
+    const matchesStatus =
+      statusFilter === "all" || booking.status === statusFilter;
 
-    const bookingDate = new Date(booking.date)
-    const today = new Date()
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    // Parse date từ ISO string, lấy ngày chính xác
+    const bookingDate = new Date(booking.date);
+    if (isNaN(bookingDate.getTime())) {
+      console.warn(`Invalid date for booking ${booking.id}: ${booking.date}`);
+      return false;
+    }
+    bookingDate.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh ngày
 
-    let matchesDate = true
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset giờ
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    let matchesDate = true;
     if (dateFilter === "today") {
-      matchesDate = bookingDate.toDateString() === today.toDateString()
+      matchesDate = bookingDate.toDateString() === today.toDateString();
+      console.log(
+        `Today check for ${
+          booking.id
+        }: ${bookingDate.toDateString()} vs ${today.toDateString()} = ${matchesDate}`
+      );
     } else if (dateFilter === "tomorrow") {
-      matchesDate = bookingDate.toDateString() === tomorrow.toDateString()
+      matchesDate = bookingDate.toDateString() === tomorrow.toDateString();
     } else if (dateFilter === "week") {
-      const weekStart = new Date(today)
-      weekStart.setDate(today.getDate() - today.getDay())
-      const weekEnd = new Date(weekStart)
-      weekEnd.setDate(weekStart.getDate() + 6)
-      matchesDate = bookingDate >= weekStart && bookingDate <= weekEnd
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - today.getDay());
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      matchesDate = bookingDate >= weekStart && bookingDate <= weekEnd;
     } else if (dateFilter === "month") {
-      matchesDate = bookingDate.getMonth() === today.getMonth() && bookingDate.getFullYear() === today.getFullYear()
+      matchesDate =
+        bookingDate.getMonth() === today.getMonth() &&
+        bookingDate.getFullYear() === today.getFullYear();
     }
 
-    return matchesSearch && matchesStatus && matchesDate
-  })
-
-  const handleDeleteBooking = (id: string) => {
-    setBookings(bookings.filter((booking) => booking.id !== id))
-  }
-
-  const handleUpdateStatus = (id: string, newStatus: string) => {
-    setBookings(bookings.map((booking) => (booking.id === id ? { ...booking, status: newStatus } : booking)))
-    updateBookingStatus(id, newStatus as any)
-  }
+    const isMatch = matchesSearch && matchesStatus && matchesDate;
+    console.log(`Booking ${booking.id} filtered: ${isMatch}`, {
+      matchesSearch,
+      matchesStatus,
+      matchesDate,
+    });
+    return isMatch;
+  });
+  console.log("Filtered bookings:", filteredBookings);
 
   const handleConfirmBooking = (booking: any) => {
-    setSelectedBooking(booking)
-    setIsConfirmDialogOpen(true)
-  }
+    setSelectedBooking(booking);
+    setIsConfirmDialogOpen(true);
+  };
 
-  const handleConfirmationComplete = (bookingId: string, status: string, message?: string) => {
-    handleUpdateStatus(bookingId, status)
-
-    const booking = bookings.find((b) => b.id === bookingId)
-    if (booking) {
-      const statusText = status === "confirmed" ? "đã được xác nhận" : "đã bị từ chối"
-      addNotification({
-        type: "booking",
-        title: "Cập nhật lịch hẹn",
-        message: `Lịch hẹn của ${booking.customerName} ${statusText}`,
-        data: { bookingId, status, customerName: booking.customerName },
-      })
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      const response = await fetch(`/api/appointments/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Cập nhật trạng thái thất bại");
+      }
+      const updatedBooking = await response.json();
+      setBookings(bookings.map((b) => (b.id === id ? updatedBooking : b)));
+      toast.success(`Cập nhật trạng thái thành ${newStatus}`);
+      await fetchBookings(); // Refetch để cập nhật UI
+    } catch (error: any) {
+      toast.error(error.message || "Lỗi khi cập nhật trạng thái");
     }
-  }
+  };
+
+  const handleDeleteBooking = async (id: string) => {
+    if (confirm("Bạn có chắc muốn xóa lịch hẹn này?")) {
+      try {
+        const response = await fetch(`/api/appointments/${id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Xóa thất bại");
+        }
+        setBookings(bookings.filter((b) => b.id !== id));
+        toast.success("Xóa lịch hẹn thành công");
+        await fetchBookings(); // Refetch để cập nhật UI
+      } catch (error: any) {
+        toast.error(error.message || "Lỗi khi xóa lịch hẹn");
+      }
+    }
+  };
+
+  const handleConfirmationComplete = async (
+    bookingId: string,
+    status: string,
+    message?: string
+  ) => {
+    try {
+      const response = await fetch(`/api/appointments/${bookingId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Xác nhận thất bại");
+      }
+      const updatedBooking = await response.json();
+      setBookings(
+        bookings.map((b) => (b.id === bookingId ? updatedBooking : b))
+      );
+      toast.success(
+        `Lịch hẹn ${status === "confirmed" ? "đã xác nhận" : "đã bị từ chối"}`
+      );
+      await fetchBookings(); // Refetch để cập nhật UI
+    } catch (error: any) {
+      toast.error(error.message || "Lỗi khi xác nhận");
+    }
+    setIsConfirmDialogOpen(false);
+    setSelectedBooking(null);
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed":
-        return <Badge className="bg-admin-accent text-admin-accent-foreground">Đã xác nhận</Badge>
+        return (
+          <Badge className="bg-admin-accent text-admin-accent-foreground">
+            Đã xác nhận
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-admin-secondary text-admin-secondary-foreground">Chờ xác nhận</Badge>
+        return (
+          <Badge className="bg-admin-secondary text-admin-secondary-foreground">
+            Chờ xác nhận
+          </Badge>
+        );
       case "in-progress":
-        return <Badge className="bg-admin-primary text-admin-primary-foreground">Đang thực hiện</Badge>
+        return (
+          <Badge className="bg-admin-primary text-admin-primary-foreground">
+            Đang thực hiện
+          </Badge>
+        );
       case "completed":
-        return <Badge className="bg-green-500 text-white">Hoàn thành</Badge>
-      case "cancelled":
-        return <Badge className="bg-admin-destructive text-admin-destructive-foreground">Đã hủy</Badge>
+        return <Badge className="bg-green-500 text-white">Hoàn thành</Badge>;
+      case "canceled":
+        return (
+          <Badge className="bg-admin-destructive text-admin-destructive-foreground">
+            Đã hủy
+          </Badge>
+        );
       default:
-        return <Badge variant="outline">Không xác định</Badge>
+        return <Badge variant="outline">Không xác định</Badge>;
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("vi-VN", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const formatTime = (timeString: string) => {
-    return timeString
-  }
+    return timeString;
+  };
 
   return (
     <>
       <Card className="bg-admin-card border-admin-border">
         <CardHeader>
-          <CardTitle className="text-admin-foreground">Danh sách lịch hẹn ({filteredBookings.length})</CardTitle>
+          <CardTitle className="text-admin-foreground">
+            Danh sách lịch hẹn ({bookings.length})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border border-admin-border">
             <Table>
               <TableHeader>
                 <TableRow className="border-admin-border">
-                  <TableHead className="text-admin-card-foreground">Khách hàng</TableHead>
-                  <TableHead className="text-admin-card-foreground">Dịch vụ</TableHead>
-                  <TableHead className="text-admin-card-foreground">Ngày & Giờ</TableHead>
-                  <TableHead className="text-admin-card-foreground">Trạng thái</TableHead>
-                  <TableHead className="text-admin-card-foreground">Giá</TableHead>
-                  <TableHead className="text-admin-card-foreground">Liên hệ</TableHead>
-                  <TableHead className="text-admin-card-foreground text-right">Thao tác</TableHead>
+                  <TableHead className="text-admin-card-foreground">
+                    Khách hàng
+                  </TableHead>
+                  <TableHead className="text-admin-card-foreground">
+                    Dịch vụ
+                  </TableHead>
+                  <TableHead className="text-admin-card-foreground">
+                    Ngày & Giờ
+                  </TableHead>
+                  <TableHead className="text-admin-card-foreground">
+                    Trạng thái
+                  </TableHead>
+                  <TableHead className="text-admin-card-foreground">
+                    Giá
+                  </TableHead>
+                  <TableHead className="text-admin-card-foreground">
+                    Liên hệ
+                  </TableHead>
+                  <TableHead className="text-admin-card-foreground text-right">
+                    Thao tác
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredBookings.map((booking) => (
+                {bookings.map((booking) => (
                   <TableRow key={booking.id} className="border-admin-border">
                     <TableCell>
                       <div>
-                        <p className="font-medium text-admin-foreground">{booking.customerName}</p>
-                        <p className="text-sm text-admin-muted-foreground">{booking.email}</p>
+                        <p className="font-medium text-admin-foreground">
+                          {booking.fullName}
+                        </p>
+                        <p className="text-sm text-admin-muted-foreground">
+                          {booking.email}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="font-medium text-admin-foreground">{booking.service}</p>
-                        <p className="text-sm text-admin-muted-foreground">{booking.duration} phút</p>
+                        <p className="font-medium text-admin-foreground">
+                          {booking.serviceName}
+                        </p>
+                        <p className="text-sm text-admin-muted-foreground">
+                          {booking.duration} phút
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="font-medium text-admin-foreground">{formatDate(booking.date)}</p>
-                        <p className="text-sm text-admin-muted-foreground">{formatTime(booking.time)}</p>
+                        <p className="font-medium text-admin-foreground">
+                          {formatDate(booking.date)}
+                        </p>
+                        <p className="text-sm text-admin-muted-foreground">
+                          {formatTime(booking.time)}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell>{getStatusBadge(booking.status)}</TableCell>
@@ -219,10 +319,18 @@ export function BookingTable({ searchTerm, statusFilter, dateFilter, onEditBooki
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" className="text-admin-foreground p-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-admin-foreground p-1"
+                        >
                           <Phone className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-admin-foreground p-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-admin-foreground p-1"
+                        >
                           <Mail className="h-4 w-4" />
                         </Button>
                       </div>
@@ -241,14 +349,20 @@ export function BookingTable({ searchTerm, statusFilter, dateFilter, onEditBooki
                             </Button>
                           </>
                         )}
-
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="text-admin-foreground">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-admin-foreground"
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-admin-popover border-admin-border">
+                          <DropdownMenuContent
+                            align="end"
+                            className="bg-admin-popover border-admin-border"
+                          >
                             <DropdownMenuItem className="text-admin-popover-foreground hover:bg-admin-muted">
                               <Eye className="h-4 w-4 mr-2" />
                               Xem chi tiết
@@ -261,19 +375,19 @@ export function BookingTable({ searchTerm, statusFilter, dateFilter, onEditBooki
                               Chỉnh sửa
                             </DropdownMenuItem>
                             {booking.status === "pending" && (
-                              <>
-                                <DropdownMenuItem
-                                  onClick={() => handleConfirmBooking(booking)}
-                                  className="text-admin-popover-foreground hover:bg-admin-muted"
-                                >
-                                  <CheckCircle className="h-4 w-4 mr-2" />
-                                  Xác nhận/Từ chối
-                                </DropdownMenuItem>
-                              </>
+                              <DropdownMenuItem
+                                onClick={() => handleConfirmBooking(booking)}
+                                className="text-admin-popover-foreground hover:bg-admin-muted"
+                              >
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                Xác nhận/Từ chối
+                              </DropdownMenuItem>
                             )}
                             {booking.status === "confirmed" && (
                               <DropdownMenuItem
-                                onClick={() => handleUpdateStatus(booking.id, "in-progress")}
+                                onClick={() =>
+                                  handleUpdateStatus(booking.id, "in-progress")
+                                }
                                 className="text-admin-popover-foreground hover:bg-admin-muted"
                               >
                                 <Clock className="h-4 w-4 mr-2" />
@@ -282,7 +396,9 @@ export function BookingTable({ searchTerm, statusFilter, dateFilter, onEditBooki
                             )}
                             {booking.status === "in-progress" && (
                               <DropdownMenuItem
-                                onClick={() => handleUpdateStatus(booking.id, "completed")}
+                                onClick={() =>
+                                  handleUpdateStatus(booking.id, "completed")
+                                }
                                 className="text-admin-popover-foreground hover:bg-admin-muted"
                               >
                                 <CheckCircle className="h-4 w-4 mr-2" />
@@ -308,15 +424,17 @@ export function BookingTable({ searchTerm, statusFilter, dateFilter, onEditBooki
         </CardContent>
       </Card>
 
-      <BookingConfirmationDialog
-        booking={selectedBooking}
-        isOpen={isConfirmDialogOpen}
-        onClose={() => {
-          setIsConfirmDialogOpen(false)
-          setSelectedBooking(null)
-        }}
-        onConfirm={handleConfirmationComplete}
-      />
+      {selectedBooking && (
+        <BookingConfirmationDialog
+          booking={selectedBooking}
+          isOpen={isConfirmDialogOpen}
+          onClose={() => {
+            setIsConfirmDialogOpen(false);
+            setSelectedBooking(null);
+          }}
+          onConfirm={handleConfirmationComplete}
+        />
+      )}
     </>
-  )
+  );
 }

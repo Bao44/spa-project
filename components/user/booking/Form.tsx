@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -22,43 +22,6 @@ import {
   Mail,
   MessageSquare,
 } from "lucide-react";
-
-const services = [
-  {
-    id: "massage-swedish",
-    name: "Massage Thụy Điển",
-    duration: 60,
-    price: 800000,
-  },
-  {
-    id: "massage-hot-stone",
-    name: "Massage Đá Nóng",
-    duration: 90,
-    price: 1200000,
-  },
-  {
-    id: "massage-thai",
-    name: "Massage Thái Cổ Truyền",
-    duration: 90,
-    price: 1000000,
-  },
-  { id: "facial-basic", name: "Facial Cơ Bản", duration: 60, price: 900000 },
-  {
-    id: "facial-anti-aging",
-    name: "Facial Chống Lão Hóa",
-    duration: 90,
-    price: 1500000,
-  },
-  { id: "facial-acne", name: "Facial Trị Mụn", duration: 75, price: 1200000 },
-  {
-    id: "body-whitening",
-    name: "Tắm Trắng Collagen",
-    duration: 120,
-    price: 1800000,
-  },
-  { id: "body-scrub", name: "Tẩy Tế Bào Chết", duration: 60, price: 700000 },
-  { id: "body-wrap", name: "Wrap Body Detox", duration: 90, price: 1400000 },
-];
 
 const timeSlots = [
   "08:00",
@@ -89,10 +52,10 @@ const timeSlots = [
 
 export function BookingForm() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [services, setServices] = useState<any[]>([]);
   const [selectedService, setSelectedService] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
-  const [selectedTherapist, setSelectedTherapist] = useState("");
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
     phone: "",
@@ -100,32 +63,57 @@ export function BookingForm() {
     notes: "",
   });
 
-  const selectedServiceData = services.find((s) => s.id === selectedService);
+  useEffect(() => {
+    const fetchServices = async () => {
+      const res = await fetch("/api/users/services");
+      if (res.ok) {
+        const data = await res.json();
+        const flatServices = data.flatMap(([_, services]: [string, any[]]) => services);
+        setServices(flatServices);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  const selectedServiceData = services.find((s) => s.id === parseInt(selectedService));
   const totalPrice = selectedServiceData?.price || 0;
 
   const handleNextStep = () => {
-    if (currentStep < 4) {
-      setCurrentStep(currentStep + 1);
-    }
+    if (currentStep < 4) setCurrentStep(currentStep + 1);
   };
 
   const handlePrevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const handleSubmit = () => {
-    // Handle booking submission
-    alert(
-      "Đặt lịch thành công! Chúng tôi sẽ liên hệ xác nhận trong vòng 30 phút."
-    );
+  const handleSubmit = async () => {
+    const bookingData = {
+      fullName: customerInfo.name,
+      email: customerInfo.email,
+      phone: customerInfo.phone,
+      serviceId: selectedServiceData?.id,
+      date: selectedDate?.toISOString().split("T")[0],
+      time: selectedTime,
+      note: customerInfo.notes,
+    };
+
+    const res = await fetch("/api/appointments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bookingData),
+    });
+
+    if (res.ok) {
+      alert("Đặt lịch thành công! Chúng tôi sẽ liên hệ xác nhận trong vòng 30 phút.");
+    } else {
+      alert("Đặt lịch thất bại. Vui lòng thử lại.");
+    }
   };
 
   return (
     <section className="py-20 bg-background">
-      <div className="container mx-auto px-4 ">
-        <div className="max-w-4xl mx-auto ">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto">
           {/* Progress Steps */}
           <div className="flex items-center justify-center space-x-4 mb-12">
             {[1, 2, 3, 4].map((step) => (
@@ -178,11 +166,11 @@ export function BookingForm() {
                       <Card
                         key={service.id}
                         className={`cursor-pointer transition-all duration-200 ${
-                          selectedService === service.id
+                          selectedService === service.id.toString()
                             ? "border-primary bg-primary/5"
                             : "border-border/50 hover:border-primary/50"
                         }`}
-                        onClick={() => setSelectedService(service.id)}
+                        onClick={() => setSelectedService(service.id.toString())}
                       >
                         <CardContent className="p-4">
                           <div className="flex justify-between items-start">
@@ -227,9 +215,8 @@ export function BookingForm() {
                       />
                     </div>
 
-                    {/* Time & Therapist */}
+                    {/* Time Selection */}
                     <div className="space-y-6">
-                      {/* Time Selection */}
                       <div className="space-y-4">
                         <Label className="text-base font-semibold flex items-center space-x-2">
                           <Clock className="h-5 w-5" />
@@ -350,9 +337,7 @@ export function BookingForm() {
                   {/* Booking Summary */}
                   <Card className="bg-muted/20">
                     <CardHeader>
-                      <CardTitle className="text-lg">
-                        Tóm tắt đặt lịch
-                      </CardTitle>
+                      <CardTitle className="text-lg">Tóm tắt đặt lịch</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="space-y-2">
