@@ -51,7 +51,16 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { status } = body;
+    const {
+      fullName,
+      email,
+      phone,
+      serviceId,
+      date,
+      time,
+      note,
+      status,
+    } = body;
 
     // Validation status
     const validStatuses = [
@@ -61,7 +70,7 @@ export async function PUT(
       "canceled",
       "in-progress",
     ];
-    if (!status || !validStatuses.includes(status)) {
+    if (status && !validStatuses.includes(status)) {
       return NextResponse.json(
         {
           error: `Trạng thái không hợp lệ, phải là một trong: ${validStatuses.join(
@@ -72,11 +81,59 @@ export async function PUT(
       );
     }
 
-    // Update status
-    const [result] = await connection.execute(
-      `UPDATE appointments SET status = ? WHERE id = ?`,
-      [status, params.id]
-    );
+    // Chuẩn bị các trường để cập nhật
+    const updateFields: string[] = [];
+    const values: any[] = [];
+
+    // Thêm các trường vào update nếu chúng được gửi
+    if (fullName !== undefined) {
+      updateFields.push("fullName = ?");
+      values.push(fullName);
+    }
+    if (email !== undefined) {
+      updateFields.push("email = ?");
+      values.push(email);
+    }
+    if (phone !== undefined) {
+      updateFields.push("phone = ?");
+      values.push(phone);
+    }
+    if (serviceId !== undefined) {
+      updateFields.push("serviceId = ?");
+      values.push(serviceId);
+    }
+    if (date !== undefined) {
+      updateFields.push("date = ?");
+      values.push(date);
+    }
+    if (time !== undefined) {
+      updateFields.push("time = ?");
+      values.push(time);
+    }
+    if (note !== undefined) {
+      updateFields.push("note = ?");
+      values.push(note);
+    }
+    if (status !== undefined) {
+      updateFields.push("status = ?");
+      values.push(status);
+    }
+
+    // Nếu không có trường nào để cập nhật
+    if (updateFields.length === 0) {
+      return NextResponse.json(
+        { error: "Không có trường nào để cập nhật" },
+        { status: 400 }
+      );
+    }
+
+    // Thực hiện cập nhật
+    const query = `UPDATE appointments SET ${updateFields.join(
+      ", "
+    )} WHERE id = ?`;
+    values.push(appointmentId);
+
+    const [result] = await connection.execute(query, values);
 
     if ((result as any).affectedRows === 0) {
       return NextResponse.json(
@@ -85,16 +142,29 @@ export async function PUT(
       );
     }
 
-    // Lấy dữ liệu sau update
+    // Lấy dữ liệu sau khi cập nhật
     const [updatedRows] = await connection.execute(
       `SELECT a.*, s.name AS serviceName, s.price, s.duration
        FROM appointments a
-       JOIN services s ON a.serviceId = s.id
+       LEFT JOIN services s ON a.serviceId = s.id
        WHERE a.id = ?`,
-      [params.id]
+      [appointmentId]
     );
 
-    return NextResponse.json((updatedRows as any[])[0], { status: 200 });
+    const updatedAppointment = (updatedRows as any[])[0];
+    if (!updatedAppointment) {
+      return NextResponse.json(
+        { error: "Không thể lấy dữ liệu sau khi cập nhật" },
+        { status: 500 }
+      );
+    }
+
+    // Parse benefits nếu có
+    updatedAppointment.benefits = updatedAppointment.benefits
+      ? JSON.parse(updatedAppointment.benefits)
+      : [];
+
+    return NextResponse.json(updatedAppointment, { status: 200 });
   } catch (error) {
     console.error("Lỗi khi cập nhật lịch hẹn:", error);
     return NextResponse.json({ error: "Lỗi server nội bộ" }, { status: 500 });

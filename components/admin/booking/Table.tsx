@@ -47,21 +47,22 @@ export function BookingTable({
   const [bookings, setBookings] = useState<any[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Thêm loading state
 
-  // Định nghĩa fetchBookings trong scope của component
   const fetchBookings = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/appointments");
       if (!response.ok) throw new Error("Lỗi khi lấy danh sách");
       const data = await response.json();
-      console.log("Dữ liệu từ API:", data);
       setBookings(data);
     } catch (error) {
       toast.error("Không thể tải danh sách appointment");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Gọi fetchBookings khi component mount
   useEffect(() => {
     fetchBookings();
   }, []);
@@ -79,50 +80,42 @@ export function BookingTable({
     const matchesStatus =
       statusFilter === "all" || booking.status === statusFilter;
 
-    // Parse date từ ISO string, lấy ngày chính xác
-    const bookingDate = new Date(booking.date);
-    if (isNaN(bookingDate.getTime())) {
-      console.warn(`Invalid date for booking ${booking.id}: ${booking.date}`);
-      return false;
-    }
-    bookingDate.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh ngày
+    // Parse booking.date thành đối tượng Date, đảm bảo chỉ lấy ngày
+    const bookingDate = new Date(booking.date.split("T")[0]);
 
+    bookingDate.setDate(bookingDate.getDate() + 1);
+
+    // Tính ngày hiện tại và ngày mai, đặt giờ về 0 để so sánh chính xác
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset giờ
+    today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00
     const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setDate(today.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00
 
     let matchesDate = true;
+
     if (dateFilter === "today") {
       matchesDate = bookingDate.toDateString() === today.toDateString();
-      console.log(
-        `Today check for ${
-          booking.id
-        }: ${bookingDate.toDateString()} vs ${today.toDateString()} = ${matchesDate}`
-      );
     } else if (dateFilter === "tomorrow") {
       matchesDate = bookingDate.toDateString() === tomorrow.toDateString();
     } else if (dateFilter === "week") {
       const weekStart = new Date(today);
       weekStart.setDate(today.getDate() - today.getDay());
+      weekStart.setHours(0, 0, 0, 0);
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 6);
+      weekEnd.setHours(23, 59, 59, 999); // Kết thúc tuần là 23:59:59.999
       matchesDate = bookingDate >= weekStart && bookingDate <= weekEnd;
     } else if (dateFilter === "month") {
       matchesDate =
         bookingDate.getMonth() === today.getMonth() &&
         bookingDate.getFullYear() === today.getFullYear();
+    } else if (dateFilter === "all") {
+      matchesDate = true;
     }
 
-    const isMatch = matchesSearch && matchesStatus && matchesDate;
-    console.log(`Booking ${booking.id} filtered: ${isMatch}`, {
-      matchesSearch,
-      matchesStatus,
-      matchesDate,
-    });
-    return isMatch;
+    return matchesSearch && matchesStatus && matchesDate;
   });
-  console.log("Filtered bookings:", filteredBookings);
 
   const handleConfirmBooking = (booking: any) => {
     setSelectedBooking(booking);
@@ -202,31 +195,15 @@ export function BookingTable({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed":
-        return (
-          <Badge className="bg-admin-accent text-admin-accent-foreground">
-            Đã xác nhận
-          </Badge>
-        );
+        return <Badge className="bg-green-500 text-white">Đã xác nhận</Badge>;
       case "pending":
-        return (
-          <Badge className="bg-admin-secondary text-admin-secondary-foreground">
-            Chờ xác nhận
-          </Badge>
-        );
+        return <Badge className="bg-yellow-500 text-white">Chờ xác nhận</Badge>;
       case "in-progress":
-        return (
-          <Badge className="bg-admin-primary text-admin-primary-foreground">
-            Đang thực hiện
-          </Badge>
-        );
+        return <Badge className="bg-blue-500 text-white">Đang thực hiện</Badge>;
       case "completed":
-        return <Badge className="bg-green-500 text-white">Hoàn thành</Badge>;
+        return <Badge className="bg-amber-500 text-white">Hoàn thành</Badge>;
       case "canceled":
-        return (
-          <Badge className="bg-admin-destructive text-admin-destructive-foreground">
-            Đã hủy
-          </Badge>
-        );
+        return <Badge className="bg-red-500 text-white">Đã hủy</Badge>;
       default:
         return <Badge variant="outline">Không xác định</Badge>;
     }
@@ -249,178 +226,187 @@ export function BookingTable({
       <Card className="bg-admin-card border-admin-border">
         <CardHeader>
           <CardTitle className="text-admin-foreground">
-            Danh sách lịch hẹn ({bookings.length})
+            Danh sách lịch hẹn ({filteredBookings.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-admin-border">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-admin-border">
-                  <TableHead className="text-admin-card-foreground">
-                    Khách hàng
-                  </TableHead>
-                  <TableHead className="text-admin-card-foreground">
-                    Dịch vụ
-                  </TableHead>
-                  <TableHead className="text-admin-card-foreground">
-                    Ngày & Giờ
-                  </TableHead>
-                  <TableHead className="text-admin-card-foreground">
-                    Trạng thái
-                  </TableHead>
-                  <TableHead className="text-admin-card-foreground">
-                    Giá
-                  </TableHead>
-                  <TableHead className="text-admin-card-foreground">
-                    Liên hệ
-                  </TableHead>
-                  <TableHead className="text-admin-card-foreground text-right">
-                    Thao tác
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {bookings.map((booking) => (
-                  <TableRow key={booking.id} className="border-admin-border">
-                    <TableCell>
-                      <div>
-                        <p className="font-medium text-admin-foreground">
-                          {booking.fullName}
-                        </p>
-                        <p className="text-sm text-admin-muted-foreground">
-                          {booking.email}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium text-admin-foreground">
-                          {booking.serviceName}
-                        </p>
-                        <p className="text-sm text-admin-muted-foreground">
-                          {booking.duration} phút
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium text-admin-foreground">
-                          {formatDate(booking.date)}
-                        </p>
-                        <p className="text-sm text-admin-muted-foreground">
-                          {formatTime(booking.time)}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>{getStatusBadge(booking.status)}</TableCell>
-                    <TableCell className="font-medium text-admin-foreground">
-                      {booking.price.toLocaleString()}₫
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-admin-foreground p-1"
-                        >
-                          <Phone className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-admin-foreground p-1"
-                        >
-                          <Mail className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center gap-2 justify-end">
-                        {booking.status === "pending" && (
-                          <>
-                            <Button
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                              onClick={() => handleConfirmBooking(booking)}
-                            >
-                              <CheckCircle className="h-4 w-4 mr-1" />
-                              Xác nhận
-                            </Button>
-                          </>
-                        )}
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-admin-foreground"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent
-                            align="end"
-                            className="bg-admin-popover border-admin-border"
-                          >
-                            <DropdownMenuItem className="text-admin-popover-foreground hover:bg-admin-muted">
-                              <Eye className="h-4 w-4 mr-2" />
-                              Xem chi tiết
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => onEditBooking(booking)}
-                              className="text-admin-popover-foreground hover:bg-admin-muted"
-                            >
-                              <Edit className="h-4 w-4 mr-2" />
-                              Chỉnh sửa
-                            </DropdownMenuItem>
-                            {booking.status === "pending" && (
-                              <DropdownMenuItem
-                                onClick={() => handleConfirmBooking(booking)}
-                                className="text-admin-popover-foreground hover:bg-admin-muted"
-                              >
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Xác nhận/Từ chối
-                              </DropdownMenuItem>
-                            )}
-                            {booking.status === "confirmed" && (
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleUpdateStatus(booking.id, "in-progress")
-                                }
-                                className="text-admin-popover-foreground hover:bg-admin-muted"
-                              >
-                                <Clock className="h-4 w-4 mr-2" />
-                                Bắt đầu
-                              </DropdownMenuItem>
-                            )}
-                            {booking.status === "in-progress" && (
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleUpdateStatus(booking.id, "completed")
-                                }
-                                className="text-admin-popover-foreground hover:bg-admin-muted"
-                              >
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Hoàn thành
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem
-                              onClick={() => handleDeleteBooking(booking.id)}
-                              className="text-admin-destructive hover:bg-admin-destructive/10"
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Xóa
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </TableCell>
+          {isLoading ? (
+            <div>Đang tải dữ liệu...</div>
+          ) : filteredBookings.length === 0 ? (
+            <div>Không có lịch hẹn nào phù hợp với bộ lọc.</div>
+          ) : (
+            <div className="rounded-md border border-admin-border">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-admin-border">
+                    <TableHead className="text-admin-card-foreground">
+                      Khách hàng
+                    </TableHead>
+                    <TableHead className="text-admin-card-foreground">
+                      Dịch vụ
+                    </TableHead>
+                    <TableHead className="text-admin-card-foreground">
+                      Ngày & Giờ
+                    </TableHead>
+                    <TableHead className="text-admin-card-foreground">
+                      Trạng thái
+                    </TableHead>
+                    <TableHead className="text-admin-card-foreground">
+                      Giá
+                    </TableHead>
+                    <TableHead className="text-admin-card-foreground">
+                      Liên hệ
+                    </TableHead>
+                    <TableHead className="text-admin-card-foreground text-right">
+                      Thao tác
+                    </TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {filteredBookings.map((booking) => (
+                    <TableRow key={booking.id} className="border-admin-border">
+                      <TableCell>
+                        <div>
+                          <p className="font-medium text-admin-foreground">
+                            {booking.fullName}
+                          </p>
+                          <p className="text-sm text-admin-muted-foreground">
+                            {booking.email}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium text-admin-foreground">
+                            {booking.serviceName}
+                          </p>
+                          <p className="text-sm text-admin-muted-foreground">
+                            {booking.duration} phút
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium text-admin-foreground">
+                            {formatDate(booking.date)}
+                          </p>
+                          <p className="text-sm text-admin-muted-foreground">
+                            {formatTime(booking.time)}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(booking.status)}</TableCell>
+                      <TableCell className="font-medium text-admin-foreground">
+                        {booking.price.toLocaleString()}₫
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-admin-foreground p-1"
+                          >
+                            <Phone className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-admin-foreground p-1"
+                          >
+                            <Mail className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center gap-2 justify-end">
+                          {booking.status === "pending" && (
+                            <>
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700 text-white"
+                                onClick={() => handleConfirmBooking(booking)}
+                              >
+                                <CheckCircle className="h-4 w-4 mr-1" />
+                                Xác nhận
+                              </Button>
+                            </>
+                          )}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-admin-foreground"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="bg-admin-popover border-admin-border"
+                            >
+                              <DropdownMenuItem className="text-admin-popover-foreground hover:bg-admin-muted">
+                                <Eye className="h-4 w-4 mr-2" />
+                                Xem chi tiết
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => onEditBooking(booking)}
+                                className="text-admin-popover-foreground hover:bg-admin-muted"
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Chỉnh sửa
+                              </DropdownMenuItem>
+                              {booking.status === "pending" && (
+                                <DropdownMenuItem
+                                  onClick={() => handleConfirmBooking(booking)}
+                                  className="text-admin-popover-foreground hover:bg-admin-muted"
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-2" />
+                                  Xác nhận/Từ chối
+                                </DropdownMenuItem>
+                              )}
+                              {booking.status === "confirmed" && (
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handleUpdateStatus(
+                                      booking.id,
+                                      "in-progress"
+                                    )
+                                  }
+                                  className="text-admin-popover-foreground hover:bg-admin-muted"
+                                >
+                                  <Clock className="h-4 w-4 mr-2" />
+                                  Bắt đầu
+                                </DropdownMenuItem>
+                              )}
+                              {booking.status === "in-progress" && (
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handleUpdateStatus(booking.id, "completed")
+                                  }
+                                  className="text-admin-popover-foreground hover:bg-admin-muted"
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-2" />
+                                  Hoàn thành
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem
+                                onClick={() => handleDeleteBooking(booking.id)}
+                                className="text-admin-destructive hover:bg-admin-destructive/10"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Xóa
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
 

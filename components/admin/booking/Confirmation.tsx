@@ -65,7 +65,7 @@ export function BookingConfirmationDialog({
           </Button>
           <Button
             variant="destructive"
-            onClick={() => handleConfirm("cancelled")}
+            onClick={() => handleConfirm("canceled")}
           >
             <XCircle className="h-4 w-4 mr-2" /> Từ chối
           </Button>

@@ -73,39 +73,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Lỗi server nội bộ" }, { status: 500 });
   }
 }
-
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const appointmentId = params.id;
-  try {
-    const { adminId, status } = await req.json(); // adminId từ session, status = 'confirmed'
-    if (!status || status !== "confirmed") {
-      return NextResponse.json({ error: "Trạng thái không hợp lệ" }, { status: 400 });
-    }
-
-    // Cập nhật appointment
-    await connection.execute(
-      `UPDATE appointments SET status = ?, adminId = ?, updatedAt = NOW()
-       WHERE id = ? AND status = 'pending'`,
-      [status, adminId || null, appointmentId]
-    );
-
-    // Lấy thông tin sau khi cập nhật để trả về
-    const [updatedRows] = await connection.execute(
-      `SELECT a.*, s.name AS serviceName, s.price, s.duration
-       FROM appointments a
-       JOIN services s ON a.serviceId = s.id
-       WHERE a.id = ?`,
-      [appointmentId]
-    );
-    const updatedAppointment = (updatedRows as any[])[0];
-
-    if (!updatedAppointment) {
-      return NextResponse.json({ error: "Không tìm thấy appointment" }, { status: 404 });
-    }
-
-    return NextResponse.json(updatedAppointment, { status: 200 });
-  } catch (error) {
-    console.error("Lỗi khi xác nhận appointment:", error);
-    return NextResponse.json({ error: "Lỗi server nội bộ" }, { status: 500 });
-  }
-}

@@ -5,8 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "react-toastify";
 
 interface BookingFormProps {
@@ -49,6 +61,35 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
     fetchServices();
   }, []);
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     const payload = {
+  //       fullName: formData.customerName,
+  //       email: formData.email,
+  //       phone: formData.phone,
+  //       serviceId: formData.service,
+  //       date: formData.date,
+  //       time: formData.time,
+  //       note: formData.notes,
+  //       status: formData.status,
+  //     };
+  //     const method = booking ? "PUT" : "POST";
+  //     const url = booking ? `/api/appointments/${booking.id}` : "/api/appointments";
+
+  //     const response = await fetch(url, {
+  //       method,
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(payload),
+  //     });
+  //     if (!response.ok) throw new Error("Lỗi khi lưu lịch hẹn");
+  //     toast.success(booking ? "Cập nhật thành công" : "Tạo lịch hẹn thành công");
+  //     onClose();
+  //   } catch (error) {
+  //     toast.error("Lỗi khi lưu lịch hẹn");
+  //   }
+  // };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -61,23 +102,38 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
         time: formData.time,
         note: formData.notes,
         status: formData.status,
+        therapist: formData.therapist,
       };
+
       const method = booking ? "PUT" : "POST";
-      const url = booking ? `/api/appointments/${booking.id}` : "/api/appointments";
+      const url = booking
+        ? `/api/appointments/${booking.id}`
+        : "/api/appointments";
 
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       if (!response.ok) throw new Error("Lỗi khi lưu lịch hẹn");
-      toast.success(booking ? "Cập nhật thành công" : "Tạo lịch hẹn thành công");
+      const updatedData = await response.json();
+      toast.success(
+        booking ? "Cập nhật thành công" : "Tạo lịch hẹn thành công"
+      );
+
+      // Cập nhật state với dữ liệu mới
+      if (booking) {
+        setFormData((prev) => ({
+          ...prev,
+          ...updatedData, // Đồng bộ với dữ liệu từ server
+        }));
+      }
       onClose();
     } catch (error) {
       toast.error("Lỗi khi lưu lịch hẹn");
     }
   };
-
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -89,8 +145,12 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <Card className="bg-admin-background border-admin-border ml-[-8px]">
           <CardHeader className="ml-[-8px]">
-            <CardTitle className="text-admin-foreground">Thông tin khách hàng</CardTitle>
-            <CardDescription className="text-admin-card-foreground">Chi tiết liên hệ khách hàng</CardDescription>
+            <CardTitle className="text-admin-foreground">
+              Thông tin khách hàng
+            </CardTitle>
+            <CardDescription className="text-admin-card-foreground">
+              Chi tiết liên hệ khách hàng
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 ml-[-8px]">
             <div>
@@ -100,7 +160,9 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
               <Input
                 id="customerName"
                 value={formData.customerName}
-                onChange={(e) => handleInputChange("customerName", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("customerName", e.target.value)
+                }
                 placeholder="Nhập tên khách hàng"
                 className="bg-admin-input border-admin-border text-admin-foreground"
                 required
@@ -138,13 +200,20 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
 
         <Card className="bg-admin-background border-admin-border mr-[-8px]">
           <CardHeader className="ml-[-10px]">
-            <CardTitle className="text-admin-foreground">Chi tiết lịch hẹn</CardTitle>
-            <CardDescription className="text-admin-card-foreground">Thông tin dịch vụ và thời gian</CardDescription>
+            <CardTitle className="text-admin-foreground">
+              Chi tiết lịch hẹn
+            </CardTitle>
+            <CardDescription className="text-admin-card-foreground">
+              Thông tin dịch vụ và thời gian
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 ml-[-10px]">
             <div>
               <Label htmlFor="service">Dịch vụ</Label>
-              <Select value={formData.service} onValueChange={(value) => handleInputChange("service", value)}>
+              <Select
+                value={formData.service}
+                onValueChange={(value) => handleInputChange("service", value)}
+              >
                 <SelectTrigger className="bg-admin-input border-admin-border text-admin-foreground">
                   <SelectValue placeholder="Chọn dịch vụ" />
                 </SelectTrigger>
@@ -175,12 +244,23 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                 <Label htmlFor="time" className="text-admin-foreground">
                   Giờ
                 </Label>
-                <Select value={formData.time} onValueChange={(value) => handleInputChange("time", value)}>
+                <Select
+                  value={formData.time}
+                  onValueChange={(value) => handleInputChange("time", value)}
+                >
                   <SelectTrigger className="bg-admin-input border-admin-border text-admin-foreground">
                     <SelectValue placeholder="Chọn giờ" />
                   </SelectTrigger>
                   <SelectContent className="bg-black text-white">
-                    {["09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"].map((time) => (
+                    {[
+                      "09:00",
+                      "10:00",
+                      "11:00",
+                      "14:00",
+                      "15:00",
+                      "16:00",
+                      "17:00",
+                    ].map((time) => (
                       <SelectItem key={time} value={time}>
                         {time}
                       </SelectItem>
@@ -195,8 +275,12 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
 
       <Card className="bg-admin-background border-admin-border">
         <CardHeader>
-          <CardTitle className="text-admin-foreground">Thông tin bổ sung</CardTitle>
-          <CardDescription className="text-admin-card-foreground">Trạng thái và ghi chú</CardDescription>
+          <CardTitle className="text-admin-foreground">
+            Thông tin bổ sung
+          </CardTitle>
+          <CardDescription className="text-admin-card-foreground">
+            Trạng thái và ghi chú
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -204,7 +288,10 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
               <Label htmlFor="status" className="text-admin-foreground">
                 Trạng thái
               </Label>
-              <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => handleInputChange("status", value)}
+              >
                 <SelectTrigger className="bg-admin-input border-admin-border text-admin-foreground">
                   <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
@@ -221,7 +308,10 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
               <Label htmlFor="therapist" className="text-admin-foreground">
                 Nhân viên phụ trách
               </Label>
-              <Select value={formData.therapist} onValueChange={(value) => handleInputChange("therapist", value)}>
+              <Select
+                value={formData.therapist}
+                onValueChange={(value) => handleInputChange("therapist", value)}
+              >
                 <SelectTrigger className="bg-admin-input border-admin-border text-admin-foreground">
                   <SelectValue placeholder="Chọn nhân viên" />
                 </SelectTrigger>
@@ -259,7 +349,10 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
         >
           Hủy
         </Button>
-        <Button type="submit" className="bg-black text-white hover:bg-black/80 cursor-pointer">
+        <Button
+          type="submit"
+          className="bg-black text-white hover:bg-black/80 cursor-pointer"
+        >
           {booking ? "Cập nhật" : "Tạo lịch hẹn"}
         </Button>
       </div>

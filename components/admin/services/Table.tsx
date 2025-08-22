@@ -93,11 +93,11 @@ export function ServiceTable({
 
   const getCategoryBadge = (category: string) => {
     const categoryColors = {
-      massage: "bg-admin-primary text-admin-primary-foreground",
-      skincare: "bg-admin-accent text-admin-accent-foreground",
-      body: "bg-admin-secondary text-admin-secondary-foreground",
+      massage: "bg-amber-700 text-white",
+      skincare: "bg-green-500 text-white",
+      body: "bg-purple-500 text-white",
       facial: "bg-blue-500 text-white",
-      package: "bg-purple-500 text-white",
+      package: "bg-pink-500 text-white",
     };
 
     const categoryNames = {

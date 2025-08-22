@@ -13,8 +13,10 @@ interface BookingCalendarProps {
 export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [bookings, setBookings] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true); // Thêm loading
 
   const fetchBookings = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/appointments");
       if (!response.ok) throw new Error("Lỗi khi lấy danh sách");
@@ -22,6 +24,8 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
       setBookings(data);
     } catch (error) {
       toast.error("Không thể tải danh sách appointment");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -51,21 +55,24 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
 
   const getBookingsForDate = (date: Date) => {
     const dateString = date.toISOString().split("T")[0];
-    return bookings.filter((booking) => booking.date === dateString);
+    return bookings.filter((booking) => {
+      const bookingDateStr = new Date(booking.date).toISOString().split("T")[0];
+      return bookingDateStr === dateString;
+    });
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "bg-admin-accent";
-      case "pending":
-        return "bg-admin-secondary";
-      case "in-progress":
-        return "bg-admin-primary";
-      case "completed":
         return "bg-green-500";
-      case "cancelled":
-        return "bg-admin-destructive";
+      case "pending":
+        return "bg-yellow-300";
+      case "in-progress":
+        return "bg-blue-500";
+      case "completed":
+        return "bg-amber-700";
+      case "canceled":
+        return "bg-red-500";
       default:
         return "bg-gray-500";
     }
@@ -83,7 +90,7 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
 
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    const bookings = getBookingsForDate(date);
+    const dayBookings = getBookingsForDate(date);
     const isToday = date.toDateString() === new Date().toDateString();
 
     days.push(
@@ -95,7 +102,7 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
           {day}
         </div>
         <div className="space-y-1 overflow-y-auto max-h-20">
-          {bookings.slice(0, 3).map((booking) => (
+          {dayBookings.slice(0, 3).map((booking) => (
             <div
               key={booking.id}
               onClick={() => onEditBooking(booking)}
@@ -108,8 +115,8 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
               <div className="truncate">{booking.fullName}</div>
             </div>
           ))}
-          {bookings.length > 3 && (
-            <div className="text-xs text-admin-muted-foreground">+{bookings.length - 3} khác</div>
+          {dayBookings.length > 3 && (
+            <div className="text-xs text-admin-muted-foreground">+{dayBookings.length - 3} khác</div>
           )}
         </div>
       </div>
@@ -150,35 +157,43 @@ export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-7 gap-0 mb-4">
-          {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((day) => (
-            <div
-              key={day}
-              className="p-2 text-center text-sm font-medium text-admin-card-foreground border border-admin-border bg-admin-muted"
-            >
-              {day}
+        {isLoading ? (
+          <div>Đang tải lịch...</div>
+        ) : bookings.length === 0 ? (
+          <div>Không có lịch hẹn nào.</div>
+        ) : (
+          <>
+            <div className="grid grid-cols-7 gap-0 mb-4">
+              {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((day) => (
+                <div
+                  key={day}
+                  className="p-2 text-center text-sm font-medium text-admin-card-foreground border border-admin-border bg-admin-muted"
+                >
+                  {day}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-0">{days}</div>
-        <div className="flex items-center gap-4 mt-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-admin-secondary"></div>
-            <span className="text-admin-foreground">Chờ xác nhận</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-admin-accent"></div>
-            <span className="text-admin-foreground">Đã xác nhận</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-admin-primary"></div>
-            <span className="text-admin-foreground">Đang thực hiện</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-green-500"></div>
-            <span className="text-admin-foreground">Hoàn thành</span>
-          </div>
-        </div>
+            <div className="grid grid-cols-7 gap-0">{days}</div>
+            <div className="flex items-center gap-4 mt-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-yellow-300"></div>
+                <span className="text-admin-foreground">Chờ xác nhận</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-green-500"></div>
+                <span className="text-admin-foreground">Đã xác nhận</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-blue-500"></div>
+                <span className="text-admin-foreground">Đang thực hiện</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-amber-700"></div>
+                <span className="text-admin-foreground">Hoàn thành</span>
+              </div>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );

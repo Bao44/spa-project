@@ -26,6 +26,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -58,9 +59,11 @@ export default function RegisterPage() {
         { withCredentials: true }
       );
       if (response.data.message === "Đăng ký admin thành công") {
+        toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
         router.push("/login");
       }
     } catch (err: any) {
+      toast.error("Đăng ký thất bại! Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }

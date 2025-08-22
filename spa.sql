@@ -73,7 +73,7 @@ CREATE TABLE appointments (
   serviceId INT NOT NULL,
   date DATE NOT NULL,
   time VARCHAR(5) NOT NULL,
-  status ENUM('pending', 'confirmed', 'completed', 'canceled') DEFAULT 'pending',
+  status ENUM('pending', 'confirmed', 'in-progress', 'completed', 'canceled') DEFAULT 'pending',
   note TEXT,
   fullName VARCHAR(100) NULL,
   email VARCHAR(100) NULL,
@@ -102,16 +102,16 @@ CREATE TABLE sessions (
 
 -- Dữ liệu cho bảng `services` (10 bản ghi)
 INSERT INTO services (name, description, price, originalPrice, duration, category, benefits, image) VALUES
-('Massage Thư Giãn Toàn Thân', 'Dịch vụ massage toàn thân giúp giảm căng thẳng và thư giãn cơ bắp.', 800000, 1000000, 90, 'massage', '["Thư giãn", "Giảm stress", "Cải thiện tuần hoàn"]', 'https://example.com/images/massage_fullbody.jpg'),
-('Chăm Sóc Da Mặt Cao Cấp', 'Liệu trình chăm sóc da mặt với công nghệ hiện đại, làm sáng da và giảm mụn.', 1200000, NULL, 60, 'facial', '["Làm sáng da", "Giảm mụn", "Dưỡng ẩm"]', 'https://example.com/images/facial_care.jpg'),
-('Gói Chăm Sóc Cơ Thể Detox', 'Gói detox toàn diện giúp thải độc và tái tạo năng lượng.', 1500000, 1800000, 120, 'body', '["Thải độc", "Tái tạo năng lượng", "Cải thiện sức khỏe"]', 'https://example.com/images/body_detox.jpg'),
-('Massage Đá Nóng', 'Massage bằng đá nóng giúp giảm đau nhức và tăng tuần hoàn máu.', 900000, 1100000, 75, 'massage', '["Giảm đau nhức", "Tăng tuần hoàn", "Thư giãn sâu"]', 'https://example.com/images/hot_stone_massage.jpg'),
-('Gói Dịch Vụ Chăm Sóc Da 3 Buổi', 'Gói 3 buổi chăm sóc da mặt với giá ưu đãi.', 3000000, 3500000, 180, 'package', '["Làm sáng da", "Dưỡng ẩm", "Phục hồi da"]', 'https://example.com/images/package_skincare.jpg'),
-('Chăm Sóc Da Chống Lão Hóa', 'Liệu trình đặc biệt giúp giảm nếp nhăn và tái tạo da.', 1400000, 1600000, 70, 'facial', '["Giảm nếp nhăn", "Tái tạo da", "Dưỡng ẩm sâu"]', 'https://example.com/images/anti_aging_facial.jpg'),
-('Massage Chân Cải Thiện Tầm Vóc', 'Massage chân chuyên sâu giúp cải thiện tuần hoàn và giảm mệt mỏi.', 600000, 750000, 60, 'massage', '["Cải thiện tuần hoàn", "Giảm mệt mỏi", "Thư giãn chân"]', 'https://example.com/images/foot_massage.jpg'),
-('Gói Thư Giãn Toàn Diện 2 Giờ', 'Kết hợp massage và chăm sóc da trong một gói dịch vụ cao cấp.', 2000000, 2500000, 120, 'package', '["Thư giãn toàn diện", "Dưỡng da", "Giảm stress"]', 'https://example.com/images/full_relax_package.jpg'),
-('Chăm Sóc Cơ Thể Bằng Tinh Dầu', 'Sử dụng tinh dầu thiên nhiên để nuôi dưỡng và làm mềm da.', 1100000, NULL, 90, 'body', '["Nuôi dưỡng da", "Làm mềm da", "Thư giãn"]', 'https://example.com/images/oil_body_care.jpg'),
-('Massage Mẹ Bầu An Toàn', 'Dịch vụ massage chuyên biệt cho bà bầu, an toàn và thư giãn.', 1000000, 1200000, 80, 'massage', '["Thư giãn", "Giảm đau lưng", "An toàn cho mẹ bầu"]', 'https://example.com/images/prenatal_massage.jpg');
+('Massage Thư Giãn Toàn Thân', 'Dịch vụ massage toàn thân giúp giảm căng thẳng và thư giãn cơ bắp.', 80000, 100000, 90, 'massage', '["Thư giãn", "Giảm stress", "Cải thiện tuần hoàn"]', '/images/Massage-Therapy.jpg'),
+('Chăm Sóc Da Mặt Cao Cấp', 'Liệu trình chăm sóc da mặt với công nghệ hiện đại, làm sáng da và giảm mụn.', 1200000, NULL, 60, 'facial', '["Làm sáng da", "Giảm mụn", "Dưỡng ẩm"]', '/images/Cham-Soc-Da-Mat.jpg'),
+('Gói Chăm Sóc Cơ Thể Detox', 'Gói detox toàn diện giúp thải độc và tái tạo năng lượng.', 150000, 180000, 120, 'body', '["Thải độc", "Tái tạo năng lượng", "Cải thiện sức khỏe"]', '/images/Deep-Tissue-Massage.jpeg'),
+('Massage Đá Nóng', 'Massage bằng đá nóng giúp giảm đau nhức và tăng tuần hoàn máu.', 90000, 110000, 75, 'massage', '["Giảm đau nhức", "Tăng tuần hoàn", "Thư giãn sâu"]', '/images/Hot-Stone-Massage.jpg'),
+('Gói Dịch Vụ Chăm Sóc Da 3 Buổi', 'Gói 3 buchăm sóc da mặt với ổi giá ưu đãi.', 300000, 350000, 180, 'package', '["Làm sáng da", "Dưỡng ẩm", "Phục hồi da"]', '/images/Hydrafacial-Premium.jpg'),
+('Chăm Sóc Da Chống Lão Hóa', 'Liệu trình đặc biệt giúp giảm nếp nhăn và tái tạo da.', 140000, 160000, 70, 'facial', '["Giảm nếp nhăn", "Tái tạo da", "Dưỡng ẩm sâu"]', '/images/Anti-Aging-Facial.jpg'),
+('Massage Chân Cải Thiện Tầm Vóc', 'Massage chân chuyên sâu giúp cải thiện tuần hoàn và giảm mệt mỏi.', 60000, 75000, 60, 'massage', '["Cải thiện tuần hoàn", "Giảm mệt mỏi", "Thư giãn chân"]', '/images/spa.webp'),
+('Gói Thư Giãn Toàn Diện 2 Giờ', 'Kết hợp massage và chăm sóc da trong một gói dịch vụ cao cấp.', 200000, 250000, 120, 'package', '["Thư giãn toàn diện", "Dưỡng da", "Giảm stress"]', '/images/Swedish-Relaxation-Massage.png'),
+('Chăm Sóc Cơ Thể Bằng Tinh Dầu', 'Sử dụng tinh dầu thiên nhiên để nuôi dưỡng và làm mềm da.', 110000, NULL, 90, 'body', '["Nuôi dưỡng da", "Làm mềm da", "Thư giãn"]', '/images/Luxury-Body.jpg'),
+('Massage Mẹ Bầu An Toàn', 'Dịch vụ massage chuyên biệt cho bà bầu, an toàn và thư giãn.', 100000, 120000, 80, 'massage', '["Thư giãn", "Giảm đau lưng", "An toàn cho mẹ bầu"]', '/images/Slimming-Body.jpg');
 
 -- Dữ liệu cho bảng `customers` (5 bản ghi)
 INSERT INTO customers (fullName, email, phone, history) VALUES
