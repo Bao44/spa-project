@@ -13,7 +13,6 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <Header />
-      {/* Hero Section */}
       <HeroSection />
       <AboutElysian />
       <AboutSection />
