@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import connection from "@/lib/db";
 
+interface Customer {
+  id: number;
+  fullName: string;
+  email: string;
+  phone: string;
+  history: any[];
+}
+
 export async function GET(req: NextRequest) {
   try {
     const [rows] = await connection.execute(
       `SELECT id, fullName, email, phone, history FROM customers`
     );
 
-    const customers = (rows as any[]).map((customer) => ({
+    const customers: Customer[] = (rows as any[]).map((customer) => ({
       ...customer,
       history: customer.history ? JSON.parse(customer.history) : [],
     }));
@@ -31,7 +39,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Kiểm tra email hoặc phone đã tồn tại
     const [existing] = await connection.execute(
       "SELECT id FROM customers WHERE email = ? OR phone = ?",
       [email, phone]

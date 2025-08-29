@@ -1,18 +1,27 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Award } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Award } from "lucide-react";
 
-const topServices = [
-  { name: "Massage Thư Giãn Toàn Thân", bookings: 145, percentage: 85, revenue: "18,500,000₫" },
-  { name: "Chăm Sóc Da Mặt Cao Cấp", bookings: 98, percentage: 65, revenue: "12,800,000₫" },
-  { name: "Gói Dịch Vụ Chăm Sóc Da 3 Buổi", bookings: 76, percentage: 55, revenue: "15,200,000₫" },
-  { name: "Massage đá nóng", bookings: 54, percentage: 40, revenue: "8,900,000₫" },
-  { name: "Chăm Sóc Da Chống Lão Hóa", bookings: 32, percentage: 25, revenue: "5,600,000₫" },
-]
+interface Service {
+  name: string;
+  bookings: number;
+  revenue: string;
+  percentage: number;
+}
 
-export function TopServices() {
+interface TopServicesProps {
+  topServices: Service[];
+}
+
+export function TopServices({ topServices }: TopServicesProps) {
   return (
     <Card className="bg-admin-card border-admin-border">
       <CardHeader>
@@ -26,31 +35,41 @@ export function TopServices() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {topServices.map((service, index) => (
-            <div key={service.name} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-admin-primary text-admin-primary-foreground text-xs font-bold">
-                    {index + 1}
-                  </span>
-                  <span className="font-medium text-admin-foreground">{service.name}</span>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-admin-foreground">{service.bookings} lượt</p>
-                  <p className="text-xs text-admin-muted-foreground">{service.revenue}</p>
-                </div>
-              </div>
-              <Progress
-                value={service.percentage}
-                className="h-2"
-                style={{
-                  backgroundColor: "hsl(var(--admin-muted))",
-                }}
-              />
+          {topServices.length === 0 ? (
+            <div className="text-center text-admin-foreground">
+              Không có dữ liệu
             </div>
-          ))}
+          ) : (
+            topServices.map((service, index) => (
+              <div key={service.name} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-admin-primary text-admin-primary-foreground text-xs font-bold">
+                      {index + 1}
+                    </span>
+                    <span className="font-medium text-admin-foreground">
+                      {service.name}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-admin-foreground">
+                      {service.bookings} lượt
+                    </p>
+                    <p className="text-xs text-admin-muted-foreground">
+                      {service.revenue}
+                    </p>
+                  </div>
+                </div>
+                <Progress
+                  value={service.percentage}
+                  className="h-2"
+                  style={{ backgroundColor: "hsl(var(--admin-muted))" }}
+                />
+              </div>
+            ))
+          )}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

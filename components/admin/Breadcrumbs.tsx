@@ -11,21 +11,23 @@ const pathMap: Record<string, string> = {
   "/admin/customers": "Khách hàng",
 };
 
+interface Breadcrumb {
+  title: string;
+  path: string;
+  isLast: boolean;
+}
+
 export function Breadcrumbs() {
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean);
 
-  const breadcrumbs = pathSegments.map((segment, index) => {
+  const breadcrumbs: Breadcrumb[] = pathSegments.map((segment, index) => {
     const path = "/" + pathSegments.slice(0, index + 1).join("/");
     const title =
       pathMap[path] || segment.charAt(0).toUpperCase() + segment.slice(1);
     const isLast = index === pathSegments.length - 1;
 
-    return {
-      title,
-      path,
-      isLast,
-    };
+    return { title, path, isLast };
   });
 
   if (breadcrumbs.length <= 1) return null;
@@ -38,7 +40,7 @@ export function Breadcrumbs() {
       >
         <Home className="h-4 w-4" />
       </Link>
-      {breadcrumbs.map((breadcrumb, index) => (
+      {breadcrumbs.map((breadcrumb) => (
         <div key={breadcrumb.path} className="flex items-center space-x-2">
           <ChevronRight className="h-4 w-4" />
           {breadcrumb.isLast ? (

@@ -31,13 +31,11 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
     customerName: booking?.fullName || "",
     email: booking?.email || "",
     phone: booking?.phone || "",
-    service: booking?.serviceName || "",
+    serviceId: booking?.serviceId || "",
     date: booking?.date || "",
     time: booking?.time || "",
-    duration: booking?.duration || "",
-    price: booking?.price || "",
     status: booking?.status || "pending",
-    notes: booking?.notes || "",
+    notes: booking?.note || "",
   });
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,26 +53,29 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
       setLoading(false);
     }
   };
-  console.log(services);
 
   useEffect(() => {
     fetchServices();
     if (booking) {
+      let formattedDate = "";
+      if (booking.date) {
+        const date = new Date(booking.date);
+        // Chuyển đổi về múi giờ địa phương và format YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        formattedDate = `${year}-${month}-${day}`;
+      }
+
       setFormData({
         customerName: booking.fullName || "",
         email: booking.email || "",
         phone: booking.phone || "",
-        service: booking.serviceId || booking.serviceName || "",
-        date: booking.date
-          ? new Date(new Date(booking.date).setHours(0, 0, 0, 0))
-              .toLocaleDateString("en-CA", { timeZone: "Asia/Ho_Chi_Minh" })
-              .replace(/\//g, "-")
-          : "",
+        serviceId: booking.serviceId?.toString() || "",
+        date: formattedDate,
         time: booking.time || "",
-        duration: booking.duration || "",
-        price: booking.price || "",
         status: booking.status || "pending",
-        notes: booking.notes || "",
+        notes: booking.note || "",
       });
     }
   }, [booking]);
@@ -82,16 +83,23 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Validate serviceId
+      if (!formData.serviceId) {
+        toast.error("Vui lòng chọn dịch vụ");
+        return;
+      }
+
       const payload = {
         fullName: formData.customerName,
         email: formData.email,
         phone: formData.phone,
-        serviceId: formData.service,
+        serviceId: parseInt(formData.serviceId),
         date: formData.date,
         time: formData.time,
         note: formData.notes,
         status: formData.status,
       };
+
       console.log("Submitting booking:", payload);
 
       const method = booking ? "PUT" : "POST";
@@ -105,26 +113,35 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("Lỗi khi lưu lịch hẹn");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Lỗi khi lưu lịch hẹn");
+      }
+
       const updatedData = await response.json();
       toast.success(
         booking ? "Cập nhật thành công" : "Tạo lịch hẹn thành công"
       );
 
-      // Cập nhật state với dữ liệu mới
-      if (booking) {
-        setFormData((prev) => ({
-          ...prev,
-          ...updatedData, // Đồng bộ với dữ liệu từ server
-        }));
-      }
       onClose();
     } catch (error) {
-      toast.error("Lỗi khi lưu lịch hẹn");
+      console.error("Error saving booking:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Lỗi khi lưu lịch hẹn"
+      );
     }
   };
+
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Tìm service name để hiển thị
+  const getSelectedServiceName = () => {
+    const service = services.find(
+      (s) => s.id.toString() === formData.serviceId
+    );
+    return service ? service.name : "";
   };
 
   if (loading) return <div>Đang tải...</div>;
@@ -200,16 +217,25 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
             <div>
               <Label htmlFor="service">Dịch vụ</Label>
               <Select
-                value={formData.service}
-                onValueChange={(value) => handleInputChange("service", value)}
+                value={formData.serviceId}
+                onValueChange={(value) => handleInputChange("serviceId", value)}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Chọn dịch vụ" />
+                  <SelectValue
+                    placeholder={
+                      services.find(
+                        (s) => s.id.toString() === formData.serviceId
+                      )?.name || "Chọn dịch vụ"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent className="bg-black text-white">
                   {services.length > 0 ? (
                     services.map((service) => (
-                      <SelectItem key={service.id} value={service.name || service.id.toString()}>
+                      <SelectItem
+                        key={service.id}
+                        value={service.id.toString()}
+                      >
                         {service.name}
                       </SelectItem>
                     ))

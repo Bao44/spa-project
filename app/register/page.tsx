@@ -195,7 +195,7 @@ export default function RegisterPage() {
               <p className="text-sm text-muted-foreground">
                 Đã có tài khoản?{" "}
                 <Link
-                  href="/admin/login"
+                  href="/login"
                   className="text-amber-500 hover:underline font-medium"
                 >
                   Đăng nhập ngay

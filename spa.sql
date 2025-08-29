@@ -127,7 +127,12 @@ INSERT INTO appointments (customerId, serviceId, date, time, status, note, fullN
 (2, 2, '2025-08-21', '14:00', 'pending', 'Đặt cho buổi chiều', 'Trần Thị Bê', 'tbi@gmail.com', '0912345678', '2025-08-21 16:30:00'),
 (3, 3, '2025-08-22', '09:30', 'pending', 'Cần gói detox gấp', 'Lê Văn Xê', 'lvc@gmail.com', '0923456789', '2025-08-22 16:30:00'),
 (4, 4, '2025-08-23', '16:00', 'pending', 'Thích massage đá nóng', 'Phạm Thị Dê', 'ptd@gmail.com', '0934567890', '2025-08-23 10:30:00'),
-(5, 5, '2025-08-24', '11:00', 'pending', 'Đặt gói 3 buổi', 'Lý Minh Tèo', 'hve@gmail.com', '0945678901', '2025-08-24 13:00:00');
+(5, 5, '2025-08-24', '11:00', 'pending', 'Đặt gói 3 buổi', 'Lý Minh Tèo', 'hve@gmail.com', '0945678901', '2025-08-24 13:00:00'),
+(2, 6, '2025-08-25', '19:00', 'pending', 'Đặt gói 3 buổi', 'Trần Thị Bê', 'tbi@gmail.com', '0912345678', '2025-08-24 13:00:00'),
+(4, 7, '2025-08-26', '09:30', 'pending', 'Cần gói detox gấp', 'Phạm Thị Dê', 'ptd@gmail.com', '0934567890', '2025-08-23 10:30:00'),
+(1, 8, '2025-08-27', '17:00', 'pending', 'Đặt gói 3 buổi', 'Nguyễn Văn Anh', 'vana@gmail.com', '0901234567', '2025-08-20 16:00:00'),
+(3, 9, '2025-08-28', '10:00', 'pending', 'Muốn massage thư giãn sâu', 'Lê Văn Xê', 'lvc@gmail.com', '0923456789', '2025-08-22 16:30:00'),
+(5, 3, '2025-08-29', '11:00', 'pending', 'Đặt gói 3 buổi', 'Lý Minh Tèo', 'hve@gmail.com', '0945678901', '2025-08-24 13:00:00');
 
 COMMIT;
 

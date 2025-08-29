@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import connection from "@/lib/db";
 
-// POST: Tạo dịch vụ mới
+interface Service {
+  id: number;
+  name: string;
+  description: string | null;
+  price: number;
+  originalPrice: number | null;
+  duration: number;
+  category: string;
+  benefits: string[];
+  image: string | null;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -54,7 +65,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET: Lấy danh sách dịch vụ
 export async function GET(req: NextRequest) {
   try {
     const [rows] = await connection.execute(
@@ -62,7 +72,7 @@ export async function GET(req: NextRequest) {
        FROM services`
     );
 
-    const services = (rows as any[]).map((service) => ({
+    const services: Service[] = (rows as any[]).map((service) => ({
       ...service,
       benefits: service.benefits ? JSON.parse(service.benefits) : [],
     }));

@@ -11,7 +11,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Clock, User } from "lucide-react";
 
-// Định nghĩa kiểu dữ liệu cho booking
 interface Booking {
   id: number;
   time: string;
@@ -29,19 +28,22 @@ export function RecentBookings() {
   useEffect(() => {
     async function loadBookings() {
       try {
-        const response = await fetch("/api/appointments");
+        const today = new Date().toISOString().split("T")[0];
+        const response = await fetch(`/api/appointments?date=${today}`);
         if (!response.ok) throw new Error("Failed to fetch appointments");
         const data = await response.json();
 
-        // Chuyển đổi dữ liệu từ API sang định dạng phù hợp
-        const formattedBookings = data.map((item: any) => ({
+        const formattedBookings: Booking[] = data.map((item: any) => ({
           id: item.id,
           time: item.time,
           customer: item.fullName,
           service: item.serviceName,
           status: item.status,
           duration: `${item.duration} phút`,
-          price: `${item.price}₫`,
+          price: parseFloat(item.price).toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }),
         }));
         setBookings(formattedBookings);
       } catch (error) {
