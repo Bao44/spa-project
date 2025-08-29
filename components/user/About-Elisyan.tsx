@@ -18,7 +18,7 @@ export function AboutElysian() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % aboutImages.length);
-    }, 15000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);
@@ -116,7 +116,7 @@ export function AboutElysian() {
               {aboutImages.map((img, idx) => (
                 <div
                   key={idx}
-                  className={`absolute inset-0 transition-all duration-[3500ms] ease-in-out
+                  className={`absolute inset-0 transition-all duration-[3000ms] ease-in-out
               ${
                 idx === currentImageIndex
                   ? "opacity-100 scale-100"
