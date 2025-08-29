@@ -1,6 +1,5 @@
 import "../globals.css";
 import type React from "react";
-import { ThemeProvider } from "@/components/theme-provider";
 
 import { AuthProvider } from "@/components/contexts/AuthContext";
 import { AdminSidebar } from "@/components/admin/Side-Bar";
@@ -13,24 +12,17 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="light"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <AuthProvider>
-        <NotificationProvider>
-          <div className="flex">
-            <AdminSidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <AdminHeader />
+    <AuthProvider>
+      <NotificationProvider>
+        <div className="flex">
+          <AdminSidebar />
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <AdminHeader />
 
-              {children}
-            </div>
+            {children}
           </div>
-        </NotificationProvider>
-      </AuthProvider>
-    </ThemeProvider>
+        </div>
+      </NotificationProvider>
+    </AuthProvider>
   );
 }

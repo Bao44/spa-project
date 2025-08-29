@@ -41,16 +41,13 @@ export function AdminHeader() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" className="relative">
-            <Bell className="h-4 w-4" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              3
-            </span>
-          </Button>
-
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-2 hover:bg-gray-300 cursor-pointer">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 hover:bg-gray-300 cursor-pointer"
+              >
                 <User className="h-4 w-4" />
                 <span>Admin</span>
               </Button>
@@ -61,7 +58,9 @@ export function AdminHeader() {
               <DropdownMenuItem>Hồ sơ</DropdownMenuItem>
               <DropdownMenuItem>Cài đặt</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>Đăng xuất</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
+                Đăng xuất
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

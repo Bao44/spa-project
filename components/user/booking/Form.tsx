@@ -22,6 +22,7 @@ import {
   Mail,
   MessageSquare,
 } from "lucide-react";
+import { toast } from "react-toastify";
 
 const timeSlots = [
   "08:00",
@@ -62,20 +63,28 @@ export function BookingForm() {
     email: "",
     notes: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchServices = async () => {
-      const res = await fetch("/api/users/services");
-      if (res.ok) {
+      try {
+        const res = await fetch("/api/users/services");
+        if (!res.ok) throw new Error("Lỗi khi tải dịch vụ");
         const data = await res.json();
-        const flatServices = data.flatMap(([_, services]: [string, any[]]) => services);
+        const flatServices = data.flatMap(
+          ([_, services]: [string, any[]]) => services
+        );
         setServices(flatServices);
+      } catch (error) {
+        toast.error("Không thể tải danh sách dịch vụ");
       }
     };
     fetchServices();
   }, []);
 
-  const selectedServiceData = services.find((s) => s.id === parseInt(selectedService));
+  const selectedServiceData = services.find(
+    (s) => s.id === parseInt(selectedService)
+  );
   const totalPrice = selectedServiceData?.price || 0;
 
   const handleNextStep = () => {
@@ -87,26 +96,43 @@ export function BookingForm() {
   };
 
   const handleSubmit = async () => {
-    const bookingData = {
-      fullName: customerInfo.name,
-      email: customerInfo.email,
-      phone: customerInfo.phone,
-      serviceId: selectedServiceData?.id,
-      date: selectedDate?.toISOString().split("T")[0],
-      time: selectedTime,
-      note: customerInfo.notes,
-    };
+    setIsSubmitting(true);
+    try {
+      const bookingData = {
+        fullName: customerInfo.name,
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+        serviceId: selectedServiceData?.id,
+        date: selectedDate
+          ?.toLocaleDateString("en-CA", { timeZone: "Asia/Ho_Chi_Minh" })
+          .replace(/\//g, "-"), // Đảm bảo định dạng YYYY-MM-DD theo múi giờ Việt Nam
+        time: selectedTime,
+        note: customerInfo.notes,
+      };
 
-    const res = await fetch("/api/appointments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bookingData),
-    });
+      const res = await fetch("/api/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
+      });
 
-    if (res.ok) {
-      alert("Đặt lịch thành công! Chúng tôi sẽ liên hệ xác nhận trong vòng 30 phút.");
-    } else {
-      alert("Đặt lịch thất bại. Vui lòng thử lại.");
+      if (res.ok) {
+        toast.success(
+          "Đặt lịch thành công! Chúng tôi sẽ liên hệ xác nhận trong vòng 30 phút."
+        );
+        setCurrentStep(1);
+        setSelectedService("");
+        setSelectedDate(undefined);
+        setSelectedTime("");
+        setCustomerInfo({ name: "", phone: "", email: "", notes: "" });
+      } else {
+        const errorData = await res.json();
+        toast.error(errorData.error || "Đặt lịch thất bại. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      toast.error("Lỗi server. Vui lòng thử lại sau.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -170,7 +196,9 @@ export function BookingForm() {
                             ? "border-primary bg-primary/5"
                             : "border-border/50 hover:border-primary/50"
                         }`}
-                        onClick={() => setSelectedService(service.id.toString())}
+                        onClick={() =>
+                          setSelectedService(service.id.toString())
+                        }
                       >
                         <CardContent className="p-4">
                           <div className="flex justify-between items-start">
@@ -210,7 +238,11 @@ export function BookingForm() {
                         mode="single"
                         selected={selectedDate}
                         onSelect={setSelectedDate}
-                        disabled={(date) => date < new Date()}
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh chỉ ngày
+                          return date < today;
+                        }}
                         className="rounded-md border"
                       />
                     </div>
@@ -231,6 +263,7 @@ export function BookingForm() {
                               }
                               size="sm"
                               onClick={() => setSelectedTime(time)}
+                              disabled={!selectedDate}
                               className="text-sm"
                             >
                               {time}
@@ -265,6 +298,7 @@ export function BookingForm() {
                           })
                         }
                         placeholder="Nhập họ và tên"
+                        required
                       />
                     </div>
 
@@ -286,6 +320,7 @@ export function BookingForm() {
                           })
                         }
                         placeholder="Nhập số điện thoại"
+                        required
                       />
                     </div>
 
@@ -337,29 +372,32 @@ export function BookingForm() {
                   {/* Booking Summary */}
                   <Card className="bg-muted/20">
                     <CardHeader>
-                      <CardTitle className="text-lg">Tóm tắt đặt lịch</CardTitle>
+                      <CardTitle className="text-lg">
+                        Tóm tắt đặt lịch
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span>Dịch vụ:</span>
                           <span className="font-semibold">
-                            {selectedServiceData?.name}
+                            {selectedServiceData?.name || "Chưa chọn"}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Thời gian:</span>
-                          <span>{selectedServiceData?.duration} phút</span>
+                          <span>{selectedServiceData?.duration || 0} phút</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Ngày:</span>
                           <span>
-                            {selectedDate?.toLocaleDateString("vi-VN")}
+                            {selectedDate?.toLocaleDateString("vi-VN") ||
+                              "Chưa chọn"}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Giờ:</span>
-                          <span>{selectedTime}</span>
+                          <span>{selectedTime || "Chưa chọn"}</span>
                         </div>
                         <Separator />
                         <div className="flex justify-between text-lg font-bold">
@@ -381,8 +419,52 @@ export function BookingForm() {
                     Xác nhận thông tin và thanh toán
                   </h3>
                   <p className="mt-2">
-                    Vui lòng kiểm tra lại thông tin trước khi thanh toán.
+                    Vui lòng kiểm tra lại thông tin trước khi thanh toán. Sau
+                    khi xác nhận, admin sẽ liên hệ để xác nhận lịch hẹn trong
+                    vòng 30 phút.
                   </p>
+                  <Card className="mt-4 bg-muted/20">
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span>Tên:</span>
+                          <span>{customerInfo.name || "Chưa nhập"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>SĐT:</span>
+                          <span>{customerInfo.phone || "Chưa nhập"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Email:</span>
+                          <span>{customerInfo.email || "Chưa nhập"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Dịch vụ:</span>
+                          <span>
+                            {selectedServiceData?.name || "Chưa chọn"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Ngày & Giờ:</span>
+                          <span>
+                            {selectedDate?.toLocaleDateString("vi-VN") || ""}{" "}
+                            {selectedTime || ""}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Ghi chú:</span>
+                          <span>{customerInfo.notes || "Không có"}</span>
+                        </div>
+                        <Separator />
+                        <div className="flex justify-between text-lg font-bold">
+                          <span>Tổng cộng:</span>
+                          <span className="text-primary">
+                            {totalPrice.toLocaleString("vi-VN")}đ
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               )}
 
@@ -410,10 +492,12 @@ export function BookingForm() {
                 ) : (
                   <Button
                     onClick={handleSubmit}
-                    disabled={!customerInfo.name || !customerInfo.phone}
+                    disabled={
+                      !customerInfo.name || !customerInfo.phone || isSubmitting
+                    }
                     className="bg-amber-700 hover:bg-amber-600 cursor-pointer"
                   >
-                    Xác nhận đặt lịch
+                    {isSubmitting ? "Đang xử lý..." : "Xác nhận đặt lịch"}
                   </Button>
                 )}
               </div>

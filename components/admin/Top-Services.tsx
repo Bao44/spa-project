@@ -5,11 +5,11 @@ import { Progress } from "@/components/ui/progress"
 import { Award } from "lucide-react"
 
 const topServices = [
-  { name: "Massage thư giãn", bookings: 145, percentage: 85, revenue: "18,500,000₫" },
-  { name: "Chăm sóc da mặt", bookings: 98, percentage: 65, revenue: "12,800,000₫" },
-  { name: "Gói spa toàn thân", bookings: 76, percentage: 55, revenue: "15,200,000₫" },
+  { name: "Massage Thư Giãn Toàn Thân", bookings: 145, percentage: 85, revenue: "18,500,000₫" },
+  { name: "Chăm Sóc Da Mặt Cao Cấp", bookings: 98, percentage: 65, revenue: "12,800,000₫" },
+  { name: "Gói Dịch Vụ Chăm Sóc Da 3 Buổi", bookings: 76, percentage: 55, revenue: "15,200,000₫" },
   { name: "Massage đá nóng", bookings: 54, percentage: 40, revenue: "8,900,000₫" },
-  { name: "Tắm trắng", bookings: 32, percentage: 25, revenue: "5,600,000₫" },
+  { name: "Chăm Sóc Da Chống Lão Hóa", bookings: 32, percentage: 25, revenue: "5,600,000₫" },
 ]
 
 export function TopServices() {

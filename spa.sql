@@ -102,32 +102,32 @@ CREATE TABLE sessions (
 
 -- Dữ liệu cho bảng `services` (10 bản ghi)
 INSERT INTO services (name, description, price, originalPrice, duration, category, benefits, image) VALUES
-('Massage Thư Giãn Toàn Thân', 'Dịch vụ massage toàn thân giúp giảm căng thẳng và thư giãn cơ bắp.', 80000, 100000, 90, 'massage', '["Thư giãn", "Giảm stress", "Cải thiện tuần hoàn"]', '/images/Massage-Therapy.jpg'),
-('Chăm Sóc Da Mặt Cao Cấp', 'Liệu trình chăm sóc da mặt với công nghệ hiện đại, làm sáng da và giảm mụn.', 1200000, NULL, 60, 'facial', '["Làm sáng da", "Giảm mụn", "Dưỡng ẩm"]', '/images/Cham-Soc-Da-Mat.jpg'),
-('Gói Chăm Sóc Cơ Thể Detox', 'Gói detox toàn diện giúp thải độc và tái tạo năng lượng.', 150000, 180000, 120, 'body', '["Thải độc", "Tái tạo năng lượng", "Cải thiện sức khỏe"]', '/images/Deep-Tissue-Massage.jpeg'),
-('Massage Đá Nóng', 'Massage bằng đá nóng giúp giảm đau nhức và tăng tuần hoàn máu.', 90000, 110000, 75, 'massage', '["Giảm đau nhức", "Tăng tuần hoàn", "Thư giãn sâu"]', '/images/Hot-Stone-Massage.jpg'),
-('Gói Dịch Vụ Chăm Sóc Da 3 Buổi', 'Gói 3 buchăm sóc da mặt với ổi giá ưu đãi.', 300000, 350000, 180, 'package', '["Làm sáng da", "Dưỡng ẩm", "Phục hồi da"]', '/images/Hydrafacial-Premium.jpg'),
-('Chăm Sóc Da Chống Lão Hóa', 'Liệu trình đặc biệt giúp giảm nếp nhăn và tái tạo da.', 140000, 160000, 70, 'facial', '["Giảm nếp nhăn", "Tái tạo da", "Dưỡng ẩm sâu"]', '/images/Anti-Aging-Facial.jpg'),
-('Massage Chân Cải Thiện Tầm Vóc', 'Massage chân chuyên sâu giúp cải thiện tuần hoàn và giảm mệt mỏi.', 60000, 75000, 60, 'massage', '["Cải thiện tuần hoàn", "Giảm mệt mỏi", "Thư giãn chân"]', '/images/spa.webp'),
-('Gói Thư Giãn Toàn Diện 2 Giờ', 'Kết hợp massage và chăm sóc da trong một gói dịch vụ cao cấp.', 200000, 250000, 120, 'package', '["Thư giãn toàn diện", "Dưỡng da", "Giảm stress"]', '/images/Swedish-Relaxation-Massage.png'),
-('Chăm Sóc Cơ Thể Bằng Tinh Dầu', 'Sử dụng tinh dầu thiên nhiên để nuôi dưỡng và làm mềm da.', 110000, NULL, 90, 'body', '["Nuôi dưỡng da", "Làm mềm da", "Thư giãn"]', '/images/Luxury-Body.jpg'),
-('Massage Mẹ Bầu An Toàn', 'Dịch vụ massage chuyên biệt cho bà bầu, an toàn và thư giãn.', 100000, 120000, 80, 'massage', '["Thư giãn", "Giảm đau lưng", "An toàn cho mẹ bầu"]', '/images/Slimming-Body.jpg');
+('Massage Thư Giãn Toàn Thân', 'Dịch vụ massage toàn thân giúp giảm căng thẳng và thư giãn cơ bắp.', 80, 100, 90, 'Massage', '["Thư giãn", "Giảm stress", "Cải thiện tuần hoàn"]', '/images/Massage-Therapy.jpg'),
+('Chăm Sóc Da Mặt Cao Cấp', 'Liệu trình chăm sóc da mặt với công nghệ hiện đại, làm sáng da và giảm mụn.', 120, NULL, 60, 'Mặt', '["Làm sáng da", "Giảm mụn", "Dưỡng ẩm"]', '/images/Cham-Soc-Da-Mat.jpg'),
+('Gói Chăm Sóc Cơ Thể Detox', 'Gói detox toàn diện giúp thải độc và tái tạo năng lượng.', 150, 180, 120, 'Body', '["Thải độc", "Tái tạo năng lượng", "Cải thiện sức khỏe"]', '/images/Deep-Tissue-Massage.jpeg'),
+('Massage Đá Nóng', 'Massage bằng đá nóng giúp giảm đau nhức và tăng tuần hoàn máu.', 90, 110, 75, 'Massage', '["Giảm đau nhức", "Tăng tuần hoàn", "Thư giãn sâu"]', '/images/Hot-Stone-Massage.jpg'),
+('Gói Dịch Vụ Chăm Sóc Da 3 Buổi', 'Gói 3 buchăm sóc da mặt với ổi giá ưu đãi.', 300, 350, 180, 'Gói dịch vụ', '["Làm sáng da", "Dưỡng ẩm", "Phục hồi da"]', '/images/Hydrafacial-Premium.jpg'),
+('Chăm Sóc Da Chống Lão Hóa', 'Liệu trình đặc biệt giúp giảm nếp nhăn và tái tạo da.', 140, 160, 70, 'Mặt', '["Giảm nếp nhăn", "Tái tạo da", "Dưỡng ẩm sâu"]', '/images/Anti-Aging-Facial.jpg'),
+('Massage Chân Cải Thiện Tầm Vóc', 'Massage chân chuyên sâu giúp cải thiện tuần hoàn và giảm mệt mỏi.', 250, 350, 60, 'Massage', '["Cải thiện tuần hoàn", "Giảm mệt mỏi", "Thư giãn chân"]', '/images/spa.webp'),
+('Gói Thư Giãn Toàn Diện 2 Giờ', 'Kết hợp massage và chăm sóc da trong một gói dịch vụ cao cấp.', 200, 2500, 120, 'Gói dịch vụ', '["Thư giãn toàn diện", "Dưỡng da", "Giảm stress"]', '/images/Swedish-Relaxation-Massage.png'),
+('Chăm Sóc Cơ Thể Bằng Tinh Dầu', 'Sử dụng tinh dầu thiên nhiên để nuôi dưỡng và làm mềm da.', 700, NULL, 90, 'Body', '["Nuôi dưỡng da", "Làm mềm da", "Thư giãn"]', '/images/Luxury-Body.jpg'),
+('Massage Mẹ Bầu An Toàn', 'Dịch vụ massage chuyên biệt cho bà bầu, an toàn và thư giãn.', 320, 450, 80, 'Massage', '["Thư giãn", "Giảm đau lưng", "An toàn cho mẹ bầu"]', '/images/Slimming-Body.jpg');
 
 -- Dữ liệu cho bảng `customers` (5 bản ghi)
 INSERT INTO customers (fullName, email, phone, history) VALUES
-('Nguyen Van A', 'vana@example.com', '0901234567', '[]'),
-('Tran Thi B', 'tbi@example.com', '0912345678', '[]'),
-('Le Van C', 'lvc@example.com', '0923456789', '[]'),
-('Pham Thi D', 'ptd@example.com', '0934567890', '[]'),
-('Hoang Van E', 'hve@example.com', '0945678901', '[]');
+('Nguyễn Văn Anh', 'vana@gmail.com', '0901234567', '[]'),
+('Trần Thị Bê', 'tbi@gmail.com', '0912345678', '[]'),
+('Lê Văn Xê', 'lvc@gmail.com', '0923456789', '[]'),
+('Phạm Thị Dê', 'ptd@gmail.com', '0934567890', '[]'),
+('Lý Minh Tèo', 'lmt@gmail.com', '0945678901', '[]');
 
 -- Dữ liệu cho bảng `appointments` (5 bản ghi với status pending)
 INSERT INTO appointments (customerId, serviceId, date, time, status, note, fullName, email, phone, createdAt) VALUES
-(1, 1, '2025-08-20', '10:00', 'pending', 'Muốn massage thư giãn sâu', 'Nguyen Van A', 'vana@example.com', '0901234567', '2025-08-19 16:00:00'),
-(2, 2, '2025-08-21', '14:00', 'pending', 'Đặt cho buổi chiều', 'Tran Thi B', 'tbi@example.com', '0912345678', '2025-08-19 16:05:00'),
-(3, 3, '2025-08-22', '09:30', 'pending', 'Cần gói detox gấp', 'Le Van C', 'lvc@example.com', '0923456789', '2025-08-19 16:10:00'),
-(4, 4, '2025-08-23', '16:00', 'pending', 'Thích massage đá nóng', 'Pham Thi D', 'ptd@example.com', '0934567890', '2025-08-19 16:15:00'),
-(5, 5, '2025-08-24', '11:00', 'pending', 'Đặt gói 3 buổi', 'Hoang Van E', 'hve@example.com', '0945678901', '2025-08-19 16:20:00');
+(1, 1, '2025-08-20', '10:00', 'pending', 'Muốn massage thư giãn sâu', 'Nguyễn Văn Anh', 'vana@gmail.com', '0901234567', '2025-08-20 16:00:00'),
+(2, 2, '2025-08-21', '14:00', 'pending', 'Đặt cho buổi chiều', 'Trần Thị Bê', 'tbi@gmail.com', '0912345678', '2025-08-21 16:30:00'),
+(3, 3, '2025-08-22', '09:30', 'pending', 'Cần gói detox gấp', 'Lê Văn Xê', 'lvc@gmail.com', '0923456789', '2025-08-22 16:30:00'),
+(4, 4, '2025-08-23', '16:00', 'pending', 'Thích massage đá nóng', 'Phạm Thị Dê', 'ptd@gmail.com', '0934567890', '2025-08-23 10:30:00'),
+(5, 5, '2025-08-24', '11:00', 'pending', 'Đặt gói 3 buổi', 'Lý Minh Tèo', 'hve@gmail.com', '0945678901', '2025-08-24 13:00:00');
 
 COMMIT;
 

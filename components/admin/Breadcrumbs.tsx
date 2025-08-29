@@ -7,9 +7,7 @@ import { ChevronRight, Home } from "lucide-react";
 const pathMap: Record<string, string> = {
   "/admin": "Dashboard",
   "/admin/services": "Quản lý dịch vụ",
-  "/admin/blog": "Quản lý blog",
   "/admin/bookings": "Quản lý lịch hẹn",
-  "/admin/notifications": "Thông báo",
   "/admin/customers": "Khách hàng",
 };
 

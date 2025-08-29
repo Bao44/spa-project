@@ -116,12 +116,11 @@ export default function ServicesPage() {
               </SelectTrigger>
               <SelectContent className="border-admin-border z-[10]">
                 <SelectItem value="all">Tất cả danh mục</SelectItem>
-                <SelectItem value="massage">Massage</SelectItem>
-                <SelectItem value="skincare">Chăm sóc da</SelectItem>
-                <SelectItem value="body">Chăm sóc cơ thể</SelectItem>
-                <SelectItem value="facial">Chăm sóc mặt</SelectItem>
-                <SelectItem value="package">Gói dịch vụ</SelectItem>
-              </SelectContent>  
+                <SelectItem value="Massage">Massage</SelectItem>
+                <SelectItem value="Body">Chăm sóc cơ thể</SelectItem>
+                <SelectItem value="Mặt">Chăm sóc mặt</SelectItem>
+                <SelectItem value="Gói dịch vụ">Gói dịch vụ</SelectItem>
+              </SelectContent>
             </Select>
           </div>
         </CardContent>

@@ -126,11 +126,10 @@ export function ServiceForm({ service, onClose, onSuccess }: ServiceFormProps) {
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
                 <SelectContent className="bg-black text-white">
-                  <SelectItem value="massage">Massage</SelectItem>
-                  <SelectItem value="skincare">Chăm sóc da</SelectItem>
-                  <SelectItem value="body">Chăm sóc cơ thể</SelectItem>
-                  <SelectItem value="facial">Chăm sóc mặt</SelectItem>
-                  <SelectItem value="package">Gói dịch vụ</SelectItem>
+                  <SelectItem value="Massage">Massage</SelectItem>
+                  <SelectItem value="Body">Chăm sóc cơ thể</SelectItem>
+                  <SelectItem value="Mặt">Chăm sóc mặt</SelectItem>
+                  <SelectItem value="Gói dịch vụ">Gói dịch vụ</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -188,7 +187,7 @@ export function ServiceForm({ service, onClose, onSuccess }: ServiceFormProps) {
                 type="number"
                 value={formData.price}
                 onChange={(e) => handleInputChange("price", e.target.value)}
-                placeholder="800000"
+                placeholder="80.000"
                 className="bg-admin-input border-admin-border text-admin-foreground"
                 required
               />
@@ -205,7 +204,7 @@ export function ServiceForm({ service, onClose, onSuccess }: ServiceFormProps) {
                 onChange={(e) =>
                   handleInputChange("originalPrice", e.target.value)
                 }
-                placeholder="1000000"
+                placeholder="100.000"
                 className="bg-admin-input border-admin-border text-admin-foreground"
               />
             </div>

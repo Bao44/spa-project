@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Search, Filter, Calendar, Table, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,48 @@ export default function BookingsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
   const [activeView, setActiveView] = useState("table");
+  const [stats, setStats] = useState({
+    today: 0,
+    pending: 0,
+    confirmed: 0,
+    completed: 0,
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+
+  // Fetch bookings and calculate stats
+  const fetchBookingsAndStats = async () => {
+    setIsLoadingStats(true);
+    try {
+      const response = await fetch("/api/appointments");
+      if (!response.ok) throw new Error("Lỗi khi lấy danh sách");
+      const data = await response.json();
+
+      // Tính toán thống kê
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const statsData = {
+        today: data.filter((b: any) => {
+          const bookingDate = new Date(b.date.split("T")[0]);
+
+          bookingDate.setDate(bookingDate.getDate() + 1);
+          return bookingDate.toDateString() === today.toDateString();
+        }).length,
+        pending: data.filter((b: any) => b.status === "pending").length,
+        confirmed: data.filter((b: any) => b.status === "confirmed").length,
+        completed: data.filter((b: any) => b.status === "completed").length,
+      };
+
+      setStats(statsData);
+    } catch (error) {
+      console.error("Lỗi khi tính thống kê:", error);
+    } finally {
+      setIsLoadingStats(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookingsAndStats();
+  }, []);
 
   const handleAddBooking = () => {
     setEditingBooking(null);
@@ -51,6 +93,7 @@ export default function BookingsPage() {
   const handleFormClose = () => {
     setIsFormOpen(false);
     setEditingBooking(null);
+    fetchBookingsAndStats(); // Cập nhật lại thống kê sau khi thêm/sửa
   };
 
   return (
@@ -85,7 +128,7 @@ export default function BookingsPage() {
         </Dialog>
       </div>
 
-      {/* Stats Cards - Giả định số liệu từ API sau */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-admin-card border-admin-border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -95,10 +138,18 @@ export default function BookingsPage() {
             <Calendar className="h-4 w-4 text-admin-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-admin-foreground">23</div>
-            <p className="text-xs text-admin-muted-foreground">
-              +3 so với hôm qua
-            </p>
+            {isLoadingStats ? (
+              <div>Đang tải...</div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold text-admin-foreground">
+                  {stats.today}
+                </div>
+                <p className="text-xs text-admin-muted-foreground">
+                  +3 so với hôm qua
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
         <Card className="bg-admin-card border-admin-border">
@@ -109,8 +160,16 @@ export default function BookingsPage() {
             <Clock className="h-4 w-4 text-admin-secondary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-admin-foreground">8</div>
-            <p className="text-xs text-admin-muted-foreground">Cần xử lý</p>
+            {isLoadingStats ? (
+              <div>Đang tải...</div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold text-admin-foreground">
+                  {stats.pending}
+                </div>
+                <p className="text-xs text-admin-muted-foreground">Cần xử lý</p>
+              </>
+            )}
           </CardContent>
         </Card>
         <Card className="bg-admin-card border-admin-border">
@@ -121,10 +180,18 @@ export default function BookingsPage() {
             <Calendar className="h-4 w-4 text-admin-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-admin-foreground">15</div>
-            <p className="text-xs text-admin-muted-foreground">
-              Sẵn sàng phục vụ
-            </p>
+            {isLoadingStats ? (
+              <div>Đang tải...</div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold text-admin-foreground">
+                  {stats.confirmed}
+                </div>
+                <p className="text-xs text-admin-muted-foreground">
+                  Sẵn sàng phục vụ
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
         <Card className="bg-admin-card border-admin-border">
@@ -135,8 +202,16 @@ export default function BookingsPage() {
             <Calendar className="h-4 w-4 text-admin-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-admin-foreground">156</div>
-            <p className="text-xs text-admin-muted-foreground">Tuần này</p>
+            {isLoadingStats ? (
+              <div>Đang tải...</div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold text-admin-foreground">
+                  {stats.completed}
+                </div>
+                <p className="text-xs text-admin-muted-foreground">Tuần này</p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

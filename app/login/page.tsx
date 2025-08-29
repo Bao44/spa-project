@@ -19,6 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "react-toastify";
 import { useAuth } from "@/components/contexts/AuthContext";
 import { Header } from "@/components/user/Header";
+import Link from "next/link";
 
 export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -132,6 +133,12 @@ export default function AdminLoginPage() {
                 {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
               </Button>
             </form>
+            <p>
+              Đăng kí tài khoản thử nghiệm
+            </p>
+            <Link href="/register" className="text-sm text-blue-500 hover:underline">
+              Đăng kí ngay
+            </Link>
           </CardContent>
         </Card>
       </div>

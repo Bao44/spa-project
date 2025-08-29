@@ -47,7 +47,7 @@ export function BookingTable({
   const [bookings, setBookings] = useState<any[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Thêm loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchBookings = async () => {
     setIsLoading(true);
@@ -135,7 +135,7 @@ export function BookingTable({
       }
       const updatedBooking = await response.json();
       setBookings(bookings.map((b) => (b.id === id ? updatedBooking : b)));
-      toast.success(`Cập nhật trạng thái thành ${newStatus}`);
+      toast.success(`Cập nhật trạng thái thành công`);
       await fetchBookings(); // Refetch để cập nhật UI
     } catch (error: any) {
       toast.error(error.message || "Lỗi khi cập nhật trạng thái");
@@ -201,7 +201,7 @@ export function BookingTable({
       case "in-progress":
         return <Badge className="bg-blue-500 text-white">Đang thực hiện</Badge>;
       case "completed":
-        return <Badge className="bg-amber-500 text-white">Hoàn thành</Badge>;
+        return <Badge className="bg-amber-700 text-white">Hoàn thành</Badge>;
       case "canceled":
         return <Badge className="bg-red-500 text-white">Đã hủy</Badge>;
       default:
@@ -341,10 +341,7 @@ export function BookingTable({
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              align="end"
-                              className="bg-admin-popover border-admin-border"
-                            >
+                            <DropdownMenuContent align="end" className="">
                               <DropdownMenuItem className="text-admin-popover-foreground hover:bg-admin-muted">
                                 <Eye className="h-4 w-4 mr-2" />
                                 Xem chi tiết

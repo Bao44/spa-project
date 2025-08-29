@@ -27,7 +27,47 @@ export function BookingConfirmationDialog({
 }: BookingConfirmationDialogProps) {
   const [message, setMessage] = useState("");
 
-  const handleConfirm = (status: string) => {
+  const formatDateTime = (dateString: string, timeString: string) => {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Ho_Chi_Minh",
+    };
+    return date.toLocaleString("vi-VN", options) + " " + timeString;
+  };
+
+  const handleConfirm = async (status: string) => {
+    if (status === "confirmed") {
+      try {
+        const formattedDateTime = formatDateTime(booking.date, booking.time);
+        const emailPayload = {
+          to: booking.email,
+          subject: "Xác nhận lịch hẹn tại Spa",
+          text: `Kính gửi ${
+            booking.fullName
+          },\n\nLịch hẹn của bạn đã được xác nhận:\n- Dịch vụ: ${
+            booking.serviceName
+          }\n- Ngày & Giờ: ${formattedDateTime}\n- Ghi chú: ${
+            message || "Không có ghi chú"
+          }\n\nTrân trọng,\nĐội ngũ Spa`,
+        };
+
+        const response = await fetch("/api/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(emailPayload),
+        });
+
+        if (!response.ok) throw new Error("Failed to send email");
+      } catch (error) {
+        console.error("Error sending email:", error);
+      }
+    }
     onConfirm(booking.id, status, message);
     onClose();
   };
@@ -43,9 +83,7 @@ export function BookingConfirmationDialog({
         <div>
           <p>Khách hàng: {booking.fullName}</p>
           <p>Dịch vụ: {booking.serviceName}</p>
-          <p>
-            Ngày & Giờ: {booking.date} {booking.time}
-          </p>
+          <p>Ngày & Giờ: {formatDateTime(booking.date, booking.time)}</p>
           <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}

@@ -33,11 +33,6 @@ const sidebarItems = [
     icon: Calendar,
   },
   {
-    title: "Thông báo",
-    href: "/admin/notifications",
-    icon: Bell,
-  },
-  {
     title: "Khách hàng",
     href: "/admin/customers",
     icon: Users,

@@ -93,19 +93,17 @@ export function ServiceTable({
 
   const getCategoryBadge = (category: string) => {
     const categoryColors = {
-      massage: "bg-amber-700 text-white",
-      skincare: "bg-green-500 text-white",
-      body: "bg-purple-500 text-white",
-      facial: "bg-blue-500 text-white",
-      package: "bg-pink-500 text-white",
+      "Massage": "bg-amber-700 text-white",
+      "Body": "bg-purple-500 text-white",
+      "Mặt": "bg-blue-500 text-white",
+      "Gói dịch vụ": "bg-pink-500 text-white",
     };
 
     const categoryNames = {
-      massage: "Massage",
-      skincare: "Chăm sóc da",
-      body: "Chăm sóc cơ thể",
-      facial: "Chăm sóc mặt",
-      package: "Gói dịch vụ",
+      "Massage": "Massage",
+      "Body": "Body",
+      "Mặt": "Mặt",
+      "Gói dịch vụ": "Gói dịch vụ",
     };
 
     return (

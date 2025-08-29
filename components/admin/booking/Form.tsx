@@ -31,14 +31,13 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
     customerName: booking?.fullName || "",
     email: booking?.email || "",
     phone: booking?.phone || "",
-    service: booking?.serviceId || "",
+    service: booking?.serviceName || "",
     date: booking?.date || "",
     time: booking?.time || "",
     duration: booking?.duration || "",
     price: booking?.price || "",
     status: booking?.status || "pending",
     notes: booking?.notes || "",
-    therapist: booking?.therapist || "",
   });
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,39 +55,29 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
       setLoading(false);
     }
   };
+  console.log(services);
 
   useEffect(() => {
     fetchServices();
-  }, []);
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   try {
-  //     const payload = {
-  //       fullName: formData.customerName,
-  //       email: formData.email,
-  //       phone: formData.phone,
-  //       serviceId: formData.service,
-  //       date: formData.date,
-  //       time: formData.time,
-  //       note: formData.notes,
-  //       status: formData.status,
-  //     };
-  //     const method = booking ? "PUT" : "POST";
-  //     const url = booking ? `/api/appointments/${booking.id}` : "/api/appointments";
-
-  //     const response = await fetch(url, {
-  //       method,
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(payload),
-  //     });
-  //     if (!response.ok) throw new Error("Lỗi khi lưu lịch hẹn");
-  //     toast.success(booking ? "Cập nhật thành công" : "Tạo lịch hẹn thành công");
-  //     onClose();
-  //   } catch (error) {
-  //     toast.error("Lỗi khi lưu lịch hẹn");
-  //   }
-  // };
+    if (booking) {
+      setFormData({
+        customerName: booking.fullName || "",
+        email: booking.email || "",
+        phone: booking.phone || "",
+        service: booking.serviceId || booking.serviceName || "",
+        date: booking.date
+          ? new Date(new Date(booking.date).setHours(0, 0, 0, 0))
+              .toLocaleDateString("en-CA", { timeZone: "Asia/Ho_Chi_Minh" })
+              .replace(/\//g, "-")
+          : "",
+        time: booking.time || "",
+        duration: booking.duration || "",
+        price: booking.price || "",
+        status: booking.status || "pending",
+        notes: booking.notes || "",
+      });
+    }
+  }, [booking]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,8 +91,8 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
         time: formData.time,
         note: formData.notes,
         status: formData.status,
-        therapist: formData.therapist,
       };
+      console.log("Submitting booking:", payload);
 
       const method = booking ? "PUT" : "POST";
       const url = booking
@@ -214,15 +203,21 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                 value={formData.service}
                 onValueChange={(value) => handleInputChange("service", value)}
               >
-                <SelectTrigger className="bg-admin-input border-admin-border text-admin-foreground">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Chọn dịch vụ" />
                 </SelectTrigger>
                 <SelectContent className="bg-black text-white">
-                  {services.map((service) => (
-                    <SelectItem key={service.id} value={service.id}>
-                      {service.name}
+                  {services.length > 0 ? (
+                    services.map((service) => (
+                      <SelectItem key={service.id} value={service.name || service.id.toString()}>
+                        {service.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="" disabled>
+                      Không có dịch vụ
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -253,6 +248,7 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                   </SelectTrigger>
                   <SelectContent className="bg-black text-white">
                     {[
+                      "08:00",
                       "09:00",
                       "10:00",
                       "11:00",
@@ -260,6 +256,8 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                       "15:00",
                       "16:00",
                       "17:00",
+                      "18:00",
+                      "19:00",
                     ].map((time) => (
                       <SelectItem key={time} value={time}>
                         {time}
@@ -301,25 +299,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
                   <SelectItem value="in-progress">Đang thực hiện</SelectItem>
                   <SelectItem value="completed">Hoàn thành</SelectItem>
                   <SelectItem value="cancelled">Đã hủy</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="therapist" className="text-admin-foreground">
-                Nhân viên phụ trách
-              </Label>
-              <Select
-                value={formData.therapist}
-                onValueChange={(value) => handleInputChange("therapist", value)}
-              >
-                <SelectTrigger className="bg-admin-input border-admin-border text-admin-foreground">
-                  <SelectValue placeholder="Chọn nhân viên" />
-                </SelectTrigger>
-                <SelectContent className="bg-black text-white">
-                  <SelectItem value="Nguyễn Thị Lan">Nguyễn Thị Lan</SelectItem>
-                  <SelectItem value="Trần Văn Nam">Trần Văn Nam</SelectItem>
-                  <SelectItem value="Lê Thị Hoa">Lê Thị Hoa</SelectItem>
-                  <SelectItem value="Phạm Minh Tuấn">Phạm Minh Tuấn</SelectItem>
                 </SelectContent>
               </Select>
             </div>
