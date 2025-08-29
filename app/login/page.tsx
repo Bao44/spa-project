@@ -45,9 +45,9 @@ export default function AdminLoginPage() {
         response.data.message === "Đăng nhập thành công" &&
         response.data.admin
       ) {
-        setAdmin(response.data.admin); // Cập nhật context với thông tin admin
+        setAdmin(response.data.admin);
         toast.success("Đăng nhập thành công");
-        router.push("/admin"); // Chuyển hướng sang /admin
+        router.push("/admin");
       }
     } catch (err: any) {
       setError(err.response?.data?.error || "Đăng nhập thất bại");

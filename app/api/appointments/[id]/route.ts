@@ -62,7 +62,6 @@ export async function PUT(
       status,
     } = body;
 
-    // Validation status
     const validStatuses = [
       "pending",
       "confirmed",

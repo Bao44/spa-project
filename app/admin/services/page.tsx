@@ -33,7 +33,7 @@ export default function ServicesPage() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0); // State để trigger refetch
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleAddService = () => {
     setEditingService(null);
@@ -51,7 +51,7 @@ export default function ServicesPage() {
   };
 
   const handleFormSuccess = () => {
-    setRefreshKey((prev) => prev + 1); // Trigger refetch sau create/update
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
@@ -84,7 +84,7 @@ export default function ServicesPage() {
             <ServiceForm
               service={editingService}
               onClose={handleFormClose}
-              onSuccess={handleFormSuccess} // Pass onSuccess
+              onSuccess={handleFormSuccess}
             />
           </DialogContent>
         </Dialog>
@@ -126,12 +126,11 @@ export default function ServicesPage() {
         </CardContent>
       </Card>
 
-      {/* Services Table */}
       <ServiceTable
         searchTerm={searchTerm}
         categoryFilter={categoryFilter}
         onEditService={handleEditService}
-        refreshKey={refreshKey} // Pass refreshKey
+        refreshKey={refreshKey}
       />
     </div>
   );

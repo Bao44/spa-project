@@ -1,5 +1,3 @@
-// app/api/send-email/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
@@ -7,17 +5,16 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { to, subject, text } = body;
 
-  // Configure transporter
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.EMAIL_USER, // Nên đưa vào .env
-      pass: process.env.EMAIL_PASSWORD, // Nên đưa vào .env
+      user: process.env.EMAIL_USER, 
+      pass: process.env.EMAIL_PASSWORD, 
     },
   });
 
   const mailOptions = {
-    from: process.env.EMAIL_USER, // Đảm bảo biến này tồn tại trong .env
+    from: process.env.EMAIL_USER, 
     to,
     subject,
     text,

@@ -11,14 +11,35 @@ interface Customer {
 
 export async function GET(req: NextRequest) {
   try {
-    const [rows] = await connection.execute(
+    // Lấy danh sách khách hàng
+    const [customerRows] = await connection.execute(
       `SELECT id, fullName, email, phone, history FROM customers`
     );
 
-    const customers: Customer[] = (rows as any[]).map((customer) => ({
+    const customers: Customer[] = (customerRows as any[]).map((customer) => ({
       ...customer,
       history: customer.history ? JSON.parse(customer.history) : [],
     }));
+
+    // Lấy lịch sử từ appointments và cập nhật
+    const [appointmentRows] = await connection.execute(
+      `SELECT a.customerId, a.date, a.time, a.status, s.name AS service
+       FROM appointments a
+       JOIN services s ON a.serviceId = s.id
+       ORDER BY a.date DESC`
+    );
+
+    const appointments = appointmentRows as any[];
+    customers.forEach((customer) => {
+      customer.history = appointments
+        .filter((appt) => appt.customerId === customer.id)
+        .map((appt) => ({
+          date: appt.date,
+          time: appt.time,
+          service: appt.service,
+          status: appt.status,
+        }));
+    });
 
     return NextResponse.json(customers, { status: 200 });
   } catch (error) {

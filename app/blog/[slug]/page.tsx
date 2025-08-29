@@ -2,11 +2,11 @@ import { BlogPost } from "@/components/user/blog/Post";
 import { RelatedPosts } from "@/components/user/blog/Related-post";
 
 interface BlogPostPageProps {
-  params: Promise<{ slug: string }>; // Change to Promise
+  params: Promise<{ slug: string }>; 
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const resolvedParams = await params; // Await the params Promise
+  const resolvedParams = await params;
   const { slug } = resolvedParams;
 
   return (

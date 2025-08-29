@@ -6,7 +6,6 @@ import connection from "@/lib/db";
 export async function POST(request: Request) {
   try {
     const { email, username, password } = await request.json();
-    console.log("username:", username);
     // Kiểm tra xem admin đã tồn tại chưa
     const [rows]: any = await connection.query(
       "SELECT * FROM admin WHERE email = ?",

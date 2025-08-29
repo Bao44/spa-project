@@ -21,7 +21,6 @@ export function AdminHeader() {
       method: "POST",
     });
     if (response.ok) {
-      // Handle successful logout
       toast.success("Đăng xuất thành công");
       router.push("/");
     }

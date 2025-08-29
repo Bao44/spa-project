@@ -34,7 +34,7 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
     serviceId: booking?.serviceId || "",
     date: booking?.date || "",
     time: booking?.time || "",
-    status: booking?.status || "pending",
+    status: booking?.status,
     notes: booking?.note || "",
   });
   const [services, setServices] = useState<any[]>([]);
@@ -83,7 +83,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Validate serviceId
       if (!formData.serviceId) {
         toast.error("Vui lòng chọn dịch vụ");
         return;
@@ -134,14 +133,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
 
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  // Tìm service name để hiển thị
-  const getSelectedServiceName = () => {
-    const service = services.find(
-      (s) => s.id.toString() === formData.serviceId
-    );
-    return service ? service.name : "";
   };
 
   if (loading) return <div>Đang tải...</div>;

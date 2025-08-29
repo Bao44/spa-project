@@ -45,7 +45,6 @@ export default function BookingsPage() {
   });
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
-  // Fetch bookings and calculate stats
   const fetchBookingsAndStats = async () => {
     setIsLoadingStats(true);
     try {

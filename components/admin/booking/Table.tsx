@@ -80,17 +80,15 @@ export function BookingTable({
     const matchesStatus =
       statusFilter === "all" || booking.status === statusFilter;
 
-    // Parse booking.date thành đối tượng Date, đảm bảo chỉ lấy ngày
     const bookingDate = new Date(booking.date.split("T")[0]);
 
     bookingDate.setDate(bookingDate.getDate() + 1);
 
-    // Tính ngày hiện tại và ngày mai, đặt giờ về 0 để so sánh chính xác
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00
+    today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00
+    tomorrow.setHours(0, 0, 0, 0);
 
     let matchesDate = true;
 
@@ -104,7 +102,7 @@ export function BookingTable({
       weekStart.setHours(0, 0, 0, 0);
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 6);
-      weekEnd.setHours(23, 59, 59, 999); // Kết thúc tuần là 23:59:59.999
+      weekEnd.setHours(23, 59, 59, 999);
       matchesDate = bookingDate >= weekStart && bookingDate <= weekEnd;
     } else if (dateFilter === "month") {
       matchesDate =
@@ -136,7 +134,7 @@ export function BookingTable({
       const updatedBooking = await response.json();
       setBookings(bookings.map((b) => (b.id === id ? updatedBooking : b)));
       toast.success(`Cập nhật trạng thái thành công`);
-      await fetchBookings(); // Refetch để cập nhật UI
+      await fetchBookings();
     } catch (error: any) {
       toast.error(error.message || "Lỗi khi cập nhật trạng thái");
     }
@@ -155,7 +153,7 @@ export function BookingTable({
         }
         setBookings(bookings.filter((b) => b.id !== id));
         toast.success("Xóa lịch hẹn thành công");
-        await fetchBookings(); // Refetch để cập nhật UI
+        await fetchBookings();
       } catch (error: any) {
         toast.error(error.message || "Lỗi khi xóa lịch hẹn");
       }
@@ -184,7 +182,7 @@ export function BookingTable({
       toast.success(
         `Lịch hẹn ${status === "confirmed" ? "đã xác nhận" : "đã bị từ chối"}`
       );
-      await fetchBookings(); // Refetch để cập nhật UI
+      await fetchBookings();
     } catch (error: any) {
       toast.error(error.message || "Lỗi khi xác nhận");
     }

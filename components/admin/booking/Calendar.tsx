@@ -13,7 +13,7 @@ interface BookingCalendarProps {
 export function BookingCalendar({ onEditBooking }: BookingCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [bookings, setBookings] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Thêm loading
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchBookings = async () => {
     setIsLoading(true);

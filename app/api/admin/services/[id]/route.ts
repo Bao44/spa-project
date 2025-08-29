@@ -36,8 +36,8 @@ export async function PUT(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const params = await context.params; // Await the params object
-    const id = parseInt(params.id); // Convert string id to number if needed
+    const params = await context.params; 
+    const id = parseInt(params.id);
     const body = await req.json();
     const {
       name,
@@ -102,8 +102,8 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const params = await context.params; // Await the params object
-    const id = parseInt(params.id); // Convert string id to number if needed
+    const params = await context.params; 
+    const id = parseInt(params.id); 
     const [result] = await connection.execute(
       `DELETE FROM services WHERE id = ?`,
       [id]
