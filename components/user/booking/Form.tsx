@@ -89,6 +89,19 @@ export function BookingForm() {
 
   const handleNextStep = () => {
     if (currentStep < 4) setCurrentStep(currentStep + 1);
+
+    if (currentStep === 3) {
+      if (!customerInfo.name || !customerInfo.phone || !customerInfo.email) {
+        toast.error("Vui lòng điền đầy đủ thông tin cá nhân");
+        setCurrentStep(3);
+        return;
+      }
+      if (!selectedService || !selectedDate || !selectedTime) {
+        toast.error("Vui lòng hoàn tất các bước đặt lịch");
+        setCurrentStep(3);
+        return;
+      }
+    }
   };
 
   const handlePrevStep = () => {
@@ -141,9 +154,9 @@ export function BookingForm() {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Progress Steps */}
-          <div className="flex items-center justify-center space-x-4 mb-12">
+          <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-4 mb-12">
             {[1, 2, 3, 4].map((step) => (
-              <div key={step} className="flex items-center">
+              <div key={step} className="flex items-center justify-center">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                     step <= currentStep
@@ -155,7 +168,7 @@ export function BookingForm() {
                 </div>
                 {step < 4 && (
                   <div
-                    className={`w-16 h-1 mx-2 ${
+                    className={`hidden sm:block w-16 h-1 mx-2 ${
                       step < currentStep ? "bg-primary" : "bg-muted"
                     }`}
                   />

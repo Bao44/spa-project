@@ -52,10 +52,10 @@ export function HeroSection() {
           <span className="text-accent">trong tầm tay</span>
         </h1>
 
-        <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+        <i className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
           Trải nghiệm dịch vụ spa đẳng cấp quốc tế với không gian sang trọng và
           đội ngũ chuyên gia tận tâm
-        </p>
+        </i>
       </div>
 
       {/* Scroll Indicator */}

@@ -134,17 +134,6 @@ export function AboutElysian() {
                 </div>
               ))}
             </div>
-
-            {/* <div className="relative">
-            <div className="rounded-3xl overflow-hidden shadow-2xl">
-              <Image
-                src="/images/about.webp?height=600&width=500"
-                alt="Elysian Spa Interior"
-                width={500}
-                height={600}
-                className="w-full h-full object-cover"
-              />
-            </div> */}
           </div>
           <div className="absolute -top-4 -right-4 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center">
             <Star className="w-4 h-4 text-amber-500" />
