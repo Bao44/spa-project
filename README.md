@@ -292,19 +292,19 @@ POST /api/send-email → { to, subject, text } (uses EMAIL_USER/EMAIL_PASSWORD)
 <div align="center">
   
 ### 🏠 Trang chủ
-![Homepage](https://via.placeholder.com/800x500/f3e8ff/8b5cf6?text=Customer+Homepage)
+<img width="1901" height="906" alt="Image" src="https://github.com/user-attachments/assets/aa7ad092-7425-41e0-b080-36b873ab587c" />
 
 ### 📊 Admin Dashboard
 
-![Admin Dashboard](https://via.placeholder.com/800x500/e3f2fd/1976d2?text=Admin+Dashboard+Analytics)
+<img width="1905" height="908" alt="Image" src="https://github.com/user-attachments/assets/933cea05-ffb2-44c4-b193-33fa0779b957" />
 
 ### 📅 Hệ thống quản lí đặt lịch
 
-![Booking System](https://via.placeholder.com/800x500/f1f8e9/388e3c?text=Booking+Management)
+<img width="1904" height="909" alt="Image" src="https://github.com/user-attachments/assets/95c57784-3da3-4dbb-8fef-3fbd14bf3424" />
 
 ### 🛎️ Hệ thống quản lí dịch vụ
 
-![Service Management](https://via.placeholder.com/800x500/fff3e0/f57c00?text=Service+Management)
+<img width="1904" height="910" alt="Image" src="https://github.com/user-attachments/assets/9ad8dd4f-c5f4-43dd-a85e-2c43f30de147" />
 
 </div>
 
