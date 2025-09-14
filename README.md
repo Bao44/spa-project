@@ -103,8 +103,8 @@
 ---
 
 ## 🗂️ Cấu trúc dự án
-
-<div align="center">
+  
+<div>
   
 ```
 spa-project/
