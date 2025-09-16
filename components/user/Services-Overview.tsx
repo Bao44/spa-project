@@ -5,24 +5,24 @@ import Link from "next/link"
 
 const services = [
   {
-    title: "Massage Therapy",
+    title: "Massage Thư Giãn Toàn Thân",
     description: "Massage thư giãn toàn thân với tinh dầu thiên nhiên, giúp giảm stress và căng thẳng",
     image: "/images/Massage-Therapy.jpg?height=300&width=400",
-    price: "Từ 800.000đ",
+    price: "Từ 80.000đ",
     duration: "60-90 phút",
   },
   {
     title: "Chăm sóc da mặt",
     description: "Liệu trình chăm sóc da chuyên sâu với công nghệ hiện đại và sản phẩm cao cấp",
     image: "/images/Cham-Soc-Da-Mat.jpg?height=300&width=400",
-    price: "Từ 1.200.000đ",
+    price: "Từ 120.000đ",
     duration: "75-120 phút",
   },
   {
     title: "Body Treatment",
     description: "Tẩy tế bào chết và dưỡng ẩm toàn thân, mang lại làn da mềm mại và tươi sáng",
     image: "/images/Body-Treatment.jpg?height=300&width=400",
-    price: "Từ 1.000.000đ",
+    price: "Từ 300.000đ",
     duration: "90 phút",
   },
 ]

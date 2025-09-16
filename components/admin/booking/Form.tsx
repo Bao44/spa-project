@@ -84,7 +84,7 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
     e.preventDefault();
     try {
       if (!formData.serviceId) {
-        toast.error("Vui lòng chọn dịch vụ");
+        toast.error("Vui lòng chọn dịch vụ", { autoClose: 1000 });
         return;
       }
 
@@ -98,8 +98,6 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
         note: formData.notes,
         status: formData.status,
       };
-
-      console.log("Submitting booking:", payload);
 
       const method = booking ? "PUT" : "POST";
       const url = booking
@@ -119,7 +117,8 @@ export function BookingForm({ booking, onClose }: BookingFormProps) {
 
       const updatedData = await response.json();
       toast.success(
-        booking ? "Cập nhật thành công" : "Tạo lịch hẹn thành công"
+        booking ? "Cập nhật thành công" : "Tạo lịch hẹn thành công",
+        { autoClose: 1000 }
       );
 
       onClose();

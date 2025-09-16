@@ -107,7 +107,7 @@ export function AdminChart({ revenueData, appointmentStatus }: ChartProps) {
             Trạng thái lịch hẹn
           </CardTitle>
           <CardDescription className="text-admin-card-foreground">
-            Phân bố trạng thái lịch hẹn trong tháng
+            Phân bố trạng thái lịch hẹn trong ngày
           </CardDescription>
         </CardHeader>
         <CardContent>

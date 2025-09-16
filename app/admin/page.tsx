@@ -55,7 +55,7 @@ export default function DashboardPage() {
     repeatBookingRate: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState("month");
+  const [dateRange, setDateRange] = useState("week");
 
   useEffect(() => {
     async function fetchStats() {
@@ -111,7 +111,7 @@ export default function DashboardPage() {
               Tổng quan hoạt động spa hôm nay
             </p>
           </div>
-          <Select onValueChange={setDateRange} defaultValue="month">
+          <Select onValueChange={setDateRange} defaultValue="week">
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Chọn khoảng thời gian" />
             </SelectTrigger>
@@ -161,7 +161,7 @@ export default function DashboardPage() {
           <Card className="bg-admin-card border-admin-border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-admin-card-foreground">
-                Doanh thu tháng
+                Doanh thu hôm nay
               </CardTitle>
               <DollarSign className="h-4 w-4 text-admin-secondary" />
             </CardHeader>
@@ -246,14 +246,6 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-admin-card-foreground">
-                    Tỷ lệ đặt lại
-                  </span>
-                  <span className="font-medium text-admin-foreground">
-                    {stats.repeatBookingRate.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-admin-card-foreground">
                     Đánh giá trung bình
                   </span>
                   <span className="font-medium text-admin-foreground">
@@ -262,7 +254,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-admin-card-foreground">
-                    Thời gian chờ TB
+                    Thời gian chờ trung bình
                   </span>
                   <span className="font-medium text-admin-foreground">
                     12 phút

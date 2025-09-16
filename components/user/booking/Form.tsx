@@ -192,7 +192,7 @@ export function BookingForm() {
                   "Chọn ngày và giờ phù hợp với lịch trình của bạn"}
                 {currentStep === 3 &&
                   "Điền thông tin để hoàn tất việc đặt lịch"}
-                {currentStep === 4 && "Xác nhận thông tin và thanh toán"}
+                {currentStep === 4 && "Xác nhận thông tin và thanh toán (Mã QR nếu có)"}
               </CardDescription>
             </CardHeader>
 

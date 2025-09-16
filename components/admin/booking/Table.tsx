@@ -133,7 +133,7 @@ export function BookingTable({
       }
       const updatedBooking = await response.json();
       setBookings(bookings.map((b) => (b.id === id ? updatedBooking : b)));
-      toast.success(`Cập nhật trạng thái thành công`);
+      toast.success(`Cập nhật trạng thái thành công`, { autoClose: 1000 });
       await fetchBookings();
     } catch (error: any) {
       toast.error(error.message || "Lỗi khi cập nhật trạng thái");
@@ -152,7 +152,7 @@ export function BookingTable({
           throw new Error(errorData.error || "Xóa thất bại");
         }
         setBookings(bookings.filter((b) => b.id !== id));
-        toast.success("Xóa lịch hẹn thành công");
+        toast.success("Xóa lịch hẹn thành công", { autoClose: 1000 });
         await fetchBookings();
       } catch (error: any) {
         toast.error(error.message || "Lỗi khi xóa lịch hẹn");

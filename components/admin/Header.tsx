@@ -21,7 +21,7 @@ export function AdminHeader() {
       method: "POST",
     });
     if (response.ok) {
-      toast.success("Đăng xuất thành công");
+      toast.success("Đăng xuất thành công", { autoClose: 1000 });
       router.push("/");
     }
   };

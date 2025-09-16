@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
         response.data.admin
       ) {
         setAdmin(response.data.admin);
-        toast.success("Đăng nhập thành công");
+        toast.success("Đăng nhập thành công", { autoClose: 1000 });
         router.push("/admin");
       }
     } catch (err: any) {

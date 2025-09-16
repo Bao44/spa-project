@@ -30,7 +30,7 @@ export function TopServices({ topServices }: TopServicesProps) {
           Dịch vụ phổ biến
         </CardTitle>
         <CardDescription className="text-admin-card-foreground">
-          Top 5 dịch vụ được đặt nhiều nhất tháng này
+          Top 5 dịch vụ được đặt nhiều nhất ngày hôm nay
         </CardDescription>
       </CardHeader>
       <CardContent>
