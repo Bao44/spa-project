@@ -70,7 +70,7 @@ Sử dụng son dưỡng môi và kem mắt chuyên dụng để bảo vệ nh�
     readTime: "5 phút",
     category: "Chăm sóc da",
     tags: ["chăm sóc da", "mùa đông", "dưỡng ẩm", "skincare"],
-    image: "/images/about.webp?height=400&width=600",
+    image: "/images/about-2.jpg?height=400&width=600",
     featured: true,
   },
   {
@@ -118,7 +118,7 @@ Hãy đến Elysian Spa để trải nghiệm massage thải độc chuyên nghi
     readTime: "4 phút",
     category: "Massage",
     tags: ["massage", "thải độc", "sức khỏe", "wellness"],
-    image: "/images/about.webp?height=400&width=600",
+    image: "/images/Massage-Therapy.jpg?height=400&width=600",
     featured: false,
   },
   {
@@ -166,7 +166,7 @@ Hãy cập nhật những xu hướng này để có làn da đẹp nhất năm 
     readTime: "6 phút",
     category: "Xu hướng",
     tags: ["xu hướng", "làm đẹp", "2024", "beauty trends"],
-    image: "/images/about.webp?height=400&width=600",
+    image: "/images/Anti-Aging-Facial.jpg?height=400&width=600",
     featured: true,
   },
   {
@@ -235,7 +235,7 @@ Hãy đến Elysian Spa để được tư vấn chọn serum vitamin C phù h�
     readTime: "7 phút",
     category: "Chăm sóc da",
     tags: ["vitamin c", "serum", "skincare", "chăm sóc da"],
-    image: "/images/about.webp?height=400&width=600",
+    image: "/images/about-4.webp?height=400&width=600",
     featured: false,
   },
 ];
