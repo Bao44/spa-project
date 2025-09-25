@@ -9,7 +9,6 @@ export async function GET(req: NextRequest) {
     );
     const services = (rows as any[]).map((service) => ({
       ...service,
-      benefits: service.benefits ? JSON.parse(service.benefits) : [],
     }));
 
     // Nhóm theo category

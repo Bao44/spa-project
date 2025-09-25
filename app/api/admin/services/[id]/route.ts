@@ -22,7 +22,7 @@ export async function GET(
     }
 
     const service = (rows as any[])[0];
-    service.benefits = service.benefits ? JSON.parse(service.benefits) : [];
+    service.benefits = service.benefits;
 
     return NextResponse.json(service, { status: 200 });
   } catch (error) {

@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
     const customers: Customer[] = (customerRows as any[]).map((customer) => ({
       ...customer,
-      history: customer.history ? JSON.parse(customer.history) : [],
+      history: customer.history,
     }));
 
     // Lấy lịch sử từ appointments và cập nhật

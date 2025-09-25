@@ -18,12 +18,12 @@ SET time_zone = "+07:00"; -- Đặt múi giờ theo Việt Nam
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `spa`
+-- Database: `baodev`baodev
 --
 
 -- --------------------------------------------------------
-CREATE DATABASE IF NOT EXISTS `spa` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `spa`;
+CREATE DATABASE IF NOT EXISTS `baodev` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `baodev`;
 
 --
 -- Table structure for table `admin`
@@ -47,7 +47,7 @@ CREATE TABLE services (
   originalPrice DECIMAL(10, 2) NULL,
   duration INT NOT NULL,
   category VARCHAR(50),
-  benefits JSON,
+  benefits JSON NOT NULL DEFAULT (JSON_ARRAY()),
   image VARCHAR(255) NULL
 );
 
@@ -59,7 +59,7 @@ CREATE TABLE customers (
   fullName VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL,
   phone VARCHAR(10) NOT NULL,
-  history JSON DEFAULT '[]',
+  history JSON DEFAULT (JSON_ARRAY()),,
   UNIQUE KEY (email),
   UNIQUE KEY (phone)
 );
