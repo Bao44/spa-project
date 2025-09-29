@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { Sparkles, Moon, Star } from "lucide-react";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 const aboutImages = [
   "/images/about.webp",
@@ -14,30 +16,50 @@ const aboutImages = [
 
 export function AboutElysian() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.2,
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % aboutImages.length);
-    }, 10000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="py-20 px-4 relative overflow-hidden">
+    <section ref={ref} className="py-20 px-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-orange-50 to-amber-50" />
 
-      <div className="absolute top-10 left-10 text-amber-600 opacity-60">
+      <motion.div
+        className="absolute top-10 left-10 text-amber-600 opacity-60"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      >
         <Moon className="w-8 h-8" />
-      </div>
-      <div className="absolute top-20 right-20 text-orange-400 opacity-70">
+      </motion.div>
+      <motion.div
+        className="absolute top-20 right-20 text-orange-400 opacity-70"
+        animate={{ scale: [1, 1.2, 1] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      >
         <Star className="w-6 h-6" />
-      </div>
-      <div className="absolute bottom-20 left-20 text-amber-500 opacity-50">
+      </motion.div>
+      <motion.div
+        className="absolute bottom-20 left-20 text-amber-500 opacity-50"
+        animate={{ y: [-10, 10, -10] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      >
         <Sparkles className="w-10 h-10" />
-      </div>
+      </motion.div>
 
-      <div className="absolute top-1/4 left-0 opacity-30">
+      <motion.div
+        className="absolute top-1/4 left-0 opacity-30"
+        animate={{ x: [-10, 10, -10] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      >
         <svg
           width="120"
           height="200"
@@ -53,29 +75,54 @@ export function AboutElysian() {
             fill="currentColor"
           />
         </svg>
-      </div>
+      </motion.div>
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
-            <div className="flex items-center gap-2 mb-6">
+          <motion.div
+            className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-lg"
+            initial={{ opacity: 0, x: -100 }}
+            animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.div
+              className="flex items-center gap-2 mb-6"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
               <div className="w-12 h-1 bg-amber-600"></div>
-              <Sparkles className="w-5 h-5 text-amber-600" />
-            </div>
+              <Sparkles className="w-5 h-5 text-amber-600 animate-pulse" />
+            </motion.div>
 
-            <h2 className="text-4xl font-heading font-black text-amber-900 mb-6">
+            <motion.h2
+              className="text-4xl font-heading font-black text-amber-900 mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
               1 chút về ELYSIAN Spa
-            </h2>
+            </motion.h2>
 
-            <p className="text-gray-700 leading-relaxed mb-6">
+            <motion.p
+              className="text-gray-700 leading-relaxed mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
               Lấy cảm hứng từ thiên nhiên và phong cách sống hiện đại{" "}
               <strong className="text-primary">BOHEMIAN</strong>, Elysian Spa
               mang đến một loạt các liệu pháp giúp bạn sống trọn vẹn trong
               khoảnh khắc hiện tại. Chúng tôi sẽ khiến bạn cảm thấy hoàn toàn
               thư giãn và thoải mái trong không gian spa của chúng tôi.
-            </p>
+            </motion.p>
 
-            <p className="text-gray-700 leading-relaxed mb-6">
+            <motion.p
+              className="text-gray-700 leading-relaxed mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
               Chúng tôi thiết kế riêng các liệu pháp spa phù hợp với loại da và
               tính cách của bạn. Các liệu pháp chăm sóc tóc bằng thảo dược tự
               nhiên, liệu pháp chăm sóc da với tẩy tế bào chết & massage toàn
@@ -84,44 +131,58 @@ export function AboutElysian() {
               chọn cách tốt nhất để{" "}
               <strong>thư giãn, nghỉ ngơi và nạp lại năng lượng</strong> cho cơ
               thể.
-            </p>
+            </motion.p>
 
-            <div className="space-y-3 mb-8">
+            <motion.div
+              className="space-y-3 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 1 }}
+            >
               <h3 className="font-heading font-bold text-primary text-lg mb-4">
                 ELYSIAN Spa cung cấp đa dạng các liệu pháp:
               </h3>
               <ul className="space-y-2">
-                <li className="flex items-center gap-3 text-gray-700">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Massage Treatment
-                </li>
-                <li className="flex items-center gap-3 text-gray-700">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Body Skin care/ Body Scrub
-                </li>
-                <li className="flex items-center gap-3 text-gray-700">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Hair Spa/ Herbal Hair Wash
-                </li>
-                <li className="flex items-center gap-3 text-gray-700">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Facial Treatment
-                </li>
+                {[
+                  "Massage Treatment",
+                  "Body Skin care/ Body Scrub",
+                  "Hair Spa/ Herbal Hair Wash",
+                  "Facial Treatment",
+                ].map((item, index) => (
+                  <motion.li
+                    key={index}
+                    className="flex items-center gap-3 text-gray-700"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={
+                      inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }
+                    }
+                    transition={{ duration: 0.4, delay: 1.2 + index * 0.2 }}
+                  >
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    {item}
+                  </motion.li>
+                ))}
               </ul>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          <div className="relative h-[800px] flex items-center justify-center overflow-hidden rounded-3xl">
+          <motion.div
+            className="relative h-[800px] flex items-center justify-center overflow-hidden rounded-3xl"
+            initial={{ opacity: 0, x: 100 }}
+            animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
+            transition={{ duration: 0.8 }}
+          >
             <div className="absolute inset-0 z-0 overflow-hidden shadow-2xl">
               {aboutImages.map((img, idx) => (
-                <div
+                <motion.div
                   key={idx}
-                  className={`absolute inset-0 transition-all duration-[3000ms] ease-in-out
-              ${
-                idx === currentImageIndex
-                  ? "opacity-100 scale-100"
-                  : "opacity-0 scale-110"
-              }`}
+                  className={`absolute inset-0 transition-all duration-[4000ms] ease-in-out`}
+                  initial={{ opacity: 0, scale: 1.1 }}
+                  animate={{
+                    opacity: idx === currentImageIndex ? 1 : 0,
+                    scale: idx === currentImageIndex ? 1 : 1.1,
+                  }}
+                  transition={{ duration: 4 }}
                 >
                   <Image
                     src={img}
@@ -131,17 +192,25 @@ export function AboutElysian() {
                     className="w-full h-full object-cover bg-no-repeat"
                   />
                   <div className="absolute inset-0 bg-black/40" />
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
-          <div className="absolute -top-4 -right-4 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center">
+          </motion.div>
+          <motion.div
+            className="absolute -top-4 -right-4 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
             <Star className="w-4 h-4 text-amber-500" />
-          </div>
+          </motion.div>
         </div>
       </div>
 
-      <div className="absolute bottom-0 right-0 opacity-20">
+      <motion.div
+        className="absolute bottom-0 right-0 opacity-20"
+        animate={{ x: [-10, 10, -10] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      >
         <svg
           width="150"
           height="100"
@@ -157,7 +226,7 @@ export function AboutElysian() {
             fill="currentColor"
           />
         </svg>
-      </div>
+      </motion.div>
     </section>
   );
 }
