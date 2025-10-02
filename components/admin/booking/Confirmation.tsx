@@ -48,13 +48,29 @@ export function BookingConfirmationDialog({
         const emailPayload = {
           to: booking.email,
           subject: "Xác nhận lịch hẹn tại Spa",
-          text: `Kính gửi ${
-            booking.fullName
-          },\n\nLịch hẹn của bạn đã được xác nhận:\n- Dịch vụ: ${
-            booking.serviceName
-          }\n- Ngày & Giờ: ${formattedDateTime}\n- Ghi chú: ${
-            message || "Không có ghi chú"
-          }\n\nTrân trọng,\nĐội ngũ Spa`,
+          text: `Chào ${booking.fullName},
+
+Lịch hẹn của bạn tại Spa đã được xác nhận:
+
+- Dịch vụ: ${booking.serviceName}
+- Thời gian: ${formattedDateTime}
+- Ghi chú: ${message || "Không có ghi chú"}
+
+Trân trọng,
+Đội ngũ Spa`,
+          html: `
+    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+      <p>Chào <strong>${booking.fullName}</strong>,</p>
+      <p>Lịch hẹn của bạn tại <strong>Spa</strong> đã được xác nhận với thông tin như sau:</p>
+      <ul style="padding-left: 0; list-style: none;">
+        <li><strong>Dịch vụ:</strong> ${booking.serviceName}</li>
+        <li><strong>Thời gian:</strong> ${formattedDateTime}</li>
+        <li><strong>Ghi chú:</strong> ${message || "Không có ghi chú"}</li>
+      </ul>
+      <p>Hẹn gặp bạn tại Spa. Nếu cần hỗ trợ, vui lòng liên hệ lại.</p>
+      <p>Trân trọng,<br/><strong>Đội ngũ Spa</strong></p>
+    </div>
+  `,
         };
 
         const response = await fetch("/api/send-email", {
